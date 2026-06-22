@@ -9,217 +9,73 @@
   <link rel="stylesheet" href="static/style.css"/>
   <style>
     body { background: #0a0a0a; overflow: hidden; height: 100vh; }
-
-    /* ── animated gradient lines ── */
-    .lines-canvas {
-      position: fixed;
-      inset: 0;
-      z-index: 0;
-    }
-
-    /* ── content ── */
-    .hero {
-      position: relative;
-      z-index: 10;
-      height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-      padding: 2rem;
-    }
-
-    .badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      background: rgba(108,99,255,0.15);
-      border: 0.5px solid rgba(108,99,255,0.35);
-      color: #a89cff;
-      font-size: 11px;
-      font-weight: 500;
-      padding: 5px 14px;
-      border-radius: 100px;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      margin-bottom: 2rem;
-      opacity: 0;
-      animation: fadeUp 0.8s 0.2s forwards;
-    }
-    .badge-dot {
-      width: 6px; height: 6px;
-      border-radius: 50%;
-      background: #6c63ff;
-      animation: pulse 2s infinite;
-    }
-
-    .hero h2 {
-      font-size: clamp(1rem, 5vw, 3rem);
-      font-weight: 700;
-      color: #fff;
-      line-height: 1.1;
-      letter-spacing: -0.03em;
-      margin-bottom: 1.5rem;
-      opacity: 0;
-      animation: fadeUp 0.8s 0.4s forwards;
-    }
-    .hero h2 span { color: #6c63ff; }
-
-    .hero p {
-      font-size: 1rem;
-      color: #888;
-      max-width: 480px;
-      line-height: 1.8;
-      margin-bottom: 2.5rem;
-      opacity: 0;
-      animation: fadeUp 0.8s 0.6s forwards;
-    }
-
-    .hero-btns {
-      display: flex;
-      gap: 12px;
-      opacity: 0;
-      animation: fadeUp 0.8s 0.8s forwards;
-    }
-
-    .stats-row {
-      position: absolute;
-      bottom: 2.5rem;
-      display: flex;
-      gap: 3rem;
-      opacity: 0;
-      animation: fadeUp 0.8s 1s forwards;
-    }
+    .lines-canvas { position: fixed; inset: 0; z-index: 0; }
+    .hero { position: relative; z-index: 10; height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 2rem; }
+    .badge { display: inline-flex; align-items: center; gap: 6px; background: rgba(108,99,255,0.15); border: 0.5px solid rgba(108,99,255,0.35); color: #a89cff; font-size: 11px; font-weight: 500; padding: 5px 14px; border-radius: 100px; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 2rem; opacity: 0; animation: fadeUp 0.8s 0.2s forwards; }
+    .badge-dot { width: 6px; height: 6px; border-radius: 50%; background: #6c63ff; animation: pulse 2s infinite; }
+    .hero h1 { font-size: clamp(2.5rem, 6vw, 4.5rem); font-weight: 700; color: #fff; line-height: 1.1; letter-spacing: -0.03em; margin-bottom: 1.5rem; opacity: 0; animation: fadeUp 0.8s 0.4s forwards; }
+    .hero h1 span { color: #6c63ff; }
+    .hero p { font-size: 1rem; color: #888; max-width: 480px; line-height: 1.8; margin-bottom: 2.5rem; opacity: 0; animation: fadeUp 0.8s 0.6s forwards; }
+    .hero-btns { display: flex; gap: 12px; opacity: 0; animation: fadeUp 0.8s 0.8s forwards; }
+    .stats-row { position: absolute; bottom: 2.5rem; display: flex; gap: 3rem; opacity: 0; animation: fadeUp 0.8s 1s forwards; }
     .stat-item { text-align: center; }
-    .stat-item strong {
-      display: block;
-      font-size: 1.5rem;
-      font-weight: 700;
-      color: #fff;
-    }
-    .stat-item span {
-      font-size: 12px;
-      color: #555;
-    }
-
-    .divider {
-      width: 1px;
-      background: #222;
-      align-self: stretch;
-    }
-
-    @keyframes fadeUp {
-      from { opacity: 0; transform: translateY(20px); }
-      to   { opacity: 1; transform: translateY(0); }
-    }
-    @keyframes pulse {
-      0%, 100% { opacity: 1; }
-      50%       { opacity: 0.4; }
-    }
+    .stat-item strong { display: block; font-size: 1.5rem; font-weight: 700; color: #fff; }
+    .stat-item span { font-size: 12px; color: #555; }
+    .divider { width: 1px; background: #222; align-self: stretch; }
+    @keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
   </style>
 </head>
 <body>
-
   <canvas class="lines-canvas" id="canvas"></canvas>
-
   <div class="hero">
-    <div class="badge">
-      <div class="badge-dot"></div>
-      Phronesis
-    </div>
-
-    <h2>φρόνησις — the wisdom to act on what <br/>you  <span>know</span></h2>
-
-    <p>
-      An intelligent platform that adapts to you.
-      Deep course chatbot, personalised study plans,
-      and instant quiz generation — all in one place.
-    </p>
-
+    <div class="badge"><div class="badge-dot"></div>AI-powered learning platform</div>
+    <h1>Learn smarter,<br/>not <span>harder</span></h1>
+    <p>An intelligent platform that adapts to you. Deep course chatbot, personalised study plans, and instant quiz generation — all in one place.</p>
     <div class="hero-btns">
-      <button class="btn btn-primary" onclick="window.location.href='/login'">
-        Get started free
-      </button>
-      <button class="btn btn-ghost-light" onclick="window.location.href='/login'">
-          Sign in
-      </button>
+      <button class="btn btn-primary" onclick="window.location.href='/login'">Get started free</button>
+      <button class="btn btn-ghost-light" onclick="window.location.href='/login'">Sign in</button>
     </div>
-
     <div class="stats-row">
-      <div class="stat-item">
-        <strong>10k+</strong>
-        <span>Students</span>
-      </div>
+      <div class="stat-item"><strong>10k+</strong><span>Students</span></div>
       <div class="divider"></div>
-      <div class="stat-item">
-        <strong>200+</strong>
-        <span>Courses</span>
-      </div>
+      <div class="stat-item"><strong>200+</strong><span>Courses</span></div>
       <div class="divider"></div>
-      <div class="stat-item">
-        <strong>98%</strong>
-        <span>Satisfaction</span>
-      </div>
+      <div class="stat-item"><strong>98%</strong><span>Satisfaction</span></div>
     </div>
   </div>
-
   <script>
-    // ── animated gradient lines on canvas ──
     const canvas = document.getElementById('canvas');
     const ctx = canvas.getContext('2d');
-
-    function resize() {
-      canvas.width  = window.innerWidth;
-      canvas.height = window.innerHeight;
-    }
+    function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
     resize();
     window.addEventListener('resize', resize);
-
     const LINES = 6;
     const lines = Array.from({ length: LINES }, (_, i) => ({
-      x:     Math.random() * canvas.width,
-      y:     Math.random() * canvas.height,
-      angle: Math.random() * Math.PI * 2,
-      speed: 0.003 + Math.random() * 0.004,
-      length: 300 + Math.random() * 400,
-      width:  0.5 + Math.random() * 1,
-      hue:    i % 2 === 0 ? 255 : 170,
-      alpha:  0.04 + Math.random() * 0.06,
-      wave:   Math.random() * Math.PI * 2,
-      waveSpeed: 0.005 + Math.random() * 0.008,
+      x: Math.random() * canvas.width, y: Math.random() * canvas.height,
+      angle: Math.random() * Math.PI * 2, speed: 0.003 + Math.random() * 0.004,
+      length: 300 + Math.random() * 400, width: 0.5 + Math.random() * 1,
+      hue: i % 2 === 0 ? 255 : 170, alpha: 0.04 + Math.random() * 0.06,
+      wave: Math.random() * Math.PI * 2, waveSpeed: 0.005 + Math.random() * 0.008,
     }));
-
     function draw() {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
-
       lines.forEach(l => {
-        l.wave  += l.waveSpeed;
-        l.angle += Math.sin(l.wave) * 0.004;
-        l.x     += Math.cos(l.angle) * 0.4;
-        l.y     += Math.sin(l.angle) * 0.4;
-
+        l.wave += l.waveSpeed; l.angle += Math.sin(l.wave) * 0.004;
+        l.x += Math.cos(l.angle) * 0.4; l.y += Math.sin(l.angle) * 0.4;
         if (l.x < -l.length) l.x = canvas.width + l.length;
         if (l.x > canvas.width + l.length) l.x = -l.length;
         if (l.y < -l.length) l.y = canvas.height + l.length;
         if (l.y > canvas.height + l.length) l.y = -l.length;
-
         const x2 = l.x + Math.cos(l.angle) * l.length;
         const y2 = l.y + Math.sin(l.angle) * l.length;
-
         const grad = ctx.createLinearGradient(l.x, l.y, x2, y2);
-        grad.addColorStop(0,   `hsla(${l.hue}, 80%, 65%, 0)`);
+        grad.addColorStop(0, `hsla(${l.hue}, 80%, 65%, 0)`);
         grad.addColorStop(0.5, `hsla(${l.hue}, 80%, 65%, ${l.alpha})`);
-        grad.addColorStop(1,   `hsla(${l.hue}, 80%, 65%, 0)`);
-
-        ctx.beginPath();
-        ctx.moveTo(l.x, l.y);
-        ctx.lineTo(x2, y2);
-        ctx.strokeStyle = grad;
-        ctx.lineWidth   = l.width;
-        ctx.stroke();
+        grad.addColorStop(1, `hsla(${l.hue}, 80%, 65%, 0)`);
+        ctx.beginPath(); ctx.moveTo(l.x, l.y); ctx.lineTo(x2, y2);
+        ctx.strokeStyle = grad; ctx.lineWidth = l.width; ctx.stroke();
       });
-
       requestAnimationFrame(draw);
     }
     draw();

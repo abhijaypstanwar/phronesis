@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Phronesis — Reset Password</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="static/style.css"/>
+  <style>
+    body { background: #0a0a0a; min-height: 100vh; display: flex; align-items: center; justify-content: center; }
+    .wrap { width: 100%; max-width: 420px; margin: 2rem; animation: fadeUp 0.5s ease forwards; }
+    .logo { text-align: center; margin-bottom: 2rem; }
+    .logo-text { font-size: 22px; font-weight: 700; color: #fff; letter-spacing: -0.02em; }
+    .logo-text span { color: #6c63ff; }
+    .logo-sub { font-size: 11px; color: #444; margin-top: 4px; }
+    .card { background: #fff; border-radius: 16px; padding: 2.5rem 2rem; border: 0.5px solid #1e1e1e; }
+    .step { display: none; }
+    .step.active { display: block; }
+    .step-title { font-size: 1.3rem; font-weight: 700; color: #111; margin-bottom: 0.3rem; }
+    .step-sub { font-size: 13px; color: #888; margin-bottom: 1.75rem; line-height: 1.6; }
+    .password-wrap { position: relative; }
+    .password-wrap input { padding-right: 44px; }
+    .toggle-pw { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; color: #888; font-size: 16px; padding: 0; }
+    .strength-bar { height: 3px; border-radius: 2px; background: #eee; margin-top: 6px; overflow: hidden; }
+    .strength-fill { height: 100%; border-radius: 2px; transition: width 0.3s, background 0.3s; width: 0%; }
+    .strength-label { font-size: 11px; color: #888; margin-top: 4px; }
+    .error-msg { background: #ffebee; color: #c62828; font-size: 12px; padding: 10px 14px; border-radius: 8px; margin-bottom: 1rem; display: none; }
+    .error-msg.show { display: block; }
+    .success-icon { text-align: center; font-size: 48px; margin-bottom: 1rem; }
+    .no-token { text-align: center; padding: 2rem 0; }
+    .no-token p { color: #888; font-size: 13px; margin-bottom: 1rem; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="logo">
+      <div class="logo-text">Phro<span>nesis</span></div>
+      <div class="logo-sub">φρόνησις — Practical Wisdom</div>
+    </div>
+    <div class="card">
+      <div class="step active" id="step-reset">
+        <div class="step-title">Set new password</div>
+        <div class="step-sub">Choose a strong password for your account.</div>
+        <div class="error-msg" id="reset-error"></div>
+        <div class="field">
+          <label>New password</label>
+          <div class="password-wrap">
+            <input type="password" id="new-password" placeholder="Min. 8 characters" oninput="checkStrength(this.value)"/>
+            <button class="toggle-pw" onclick="togglePw('new-password', this)" type="button">👁</button>
+          </div>
+          <div class="strength-bar"><div class="strength-fill" id="strength-fill"></div></div>
+          <div class="strength-label" id="strength-label"></div>
+        </div>
+        <div class="field">
+          <label>Confirm password</label>
+          <div class="password-wrap">
+            <input type="password" id="confirm-password" placeholder="Repeat your password"/>
+            <button class="toggle-pw" onclick="togglePw('confirm-password', this)" type="button">👁</button>
+          </div>
+        </div>
+        <button class="btn btn-primary btn-full" id="reset-btn" onclick="handleReset()">Reset password</button>
+      </div>
+      <div class="step" id="step-success">
+        <div class="success-icon">🔐</div>
+        <div class="step-title" style="text-align:center;">Password updated!</div>
+        <div class="step-sub" style="text-align:center;">Your password has been reset successfully. You can now sign in with your new password.</div>
+        <button class="btn btn-primary btn-full" onclick="window.location.href='/login'">Go to sign in</button>
+      </div>
+      <div class="step" id="step-notoken">
+        <div class="no-token">
+          <div style="font-size:48px;margin-bottom:1rem;">⚠️</div>
+          <p>This reset link is invalid or has expired.</p>
+          <button class="btn btn-primary btn-full" onclick="window.location.href='/forgot'">Request a new link</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script src="static/app.js"></script>
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const token  = params.get('token');
+    if (!token) showStep('step-notoken');
+    async function handleReset() {
+      const newPw  = document.getElementById('new-password').value;
+      const confPw = document.getElementById('confirm-password').value;
+      const btn    = document.getElementById('reset-btn');
+      const err    = document.getElementById('reset-error');
+      err.classList.remove('show');
+      if (!newPw || !confPw) { err.textContent = 'Please fill in both fields'; return err.classList.add('show'); }
+      if (newPw.length < 8) { err.textContent = 'Password must be at least 8 characters'; return err.classList.add('show'); }
+      if (newPw !== confPw) { err.textContent = 'Passwords do not match'; return err.classList.add('show'); }
+      setLoading(btn, true);
+      try {
+        await apiPost('/api/auth/reset-password', { token, new_password: newPw });
+        showStep('step-success');
+      } catch (e) { err.textContent = e.message; err.classList.add('show'); setLoading(btn, false); }
+    }
+    function checkStrength(pw) {
+      const fill = document.getElementById('strength-fill');
+      const label = document.getElementById('strength-label');
+      let score = 0;
+      if (pw.length >= 8) score++; if (pw.length >= 12) score++;
+      if (/[A-Z]/.test(pw)) score++; if (/[0-9]/.test(pw)) score++;
+      if (/[^A-Za-z0-9]/.test(pw)) score++;
+      const levels = [
+        { pct: '0%', color: '#eee', text: '' }, { pct: '25%', color: '#e53935', text: 'Weak' },
+        { pct: '50%', color: '#fb8c00', text: 'Fair' }, { pct: '75%', color: '#fdd835', text: 'Good' },
+        { pct: '90%', color: '#43a047', text: 'Strong' }, { pct: '100%', color: '#1b5e20', text: 'Very strong' },
+      ];
+      const lvl = levels[Math.min(score, 5)];
+      fill.style.width = lvl.pct; fill.style.background = lvl.color;
+      label.textContent = lvl.text; label.style.color = lvl.color;
+    }
+    function togglePw(inputId, btn) {
+      const input = document.getElementById(inputId);
+      input.type = input.type === 'password' ? 'text' : 'password';
+      btn.textContent = input.type === 'password' ? '👁' : '🙈';
+    }
+    function showStep(id) { document.querySelectorAll('.step').forEach(s => s.classList.remove('active')); document.getElementById(id).classList.add('active'); }
+  </script>
+</body>
+</html>

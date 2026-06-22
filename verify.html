@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Phronesis — Verify Email</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="static/style.css"/>
+  <style>
+    body { background: #0a0a0a; min-height: 100vh; display: flex; align-items: center; justify-content: center; }
+    .wrap { width: 100%; max-width: 420px; margin: 2rem; animation: fadeUp 0.5s ease forwards; }
+    .logo { text-align: center; margin-bottom: 2rem; }
+    .logo-text { font-size: 22px; font-weight: 700; color: #fff; letter-spacing: -0.02em; }
+    .logo-text span { color: #6c63ff; }
+    .logo-sub { font-size: 11px; color: #444; margin-top: 4px; }
+    .card { background: #fff; border-radius: 16px; padding: 2.5rem 2rem; border: 0.5px solid #1e1e1e; }
+    .step { display: none; }
+    .step.active { display: block; }
+    .step-title { font-size: 1.3rem; font-weight: 700; color: #111; margin-bottom: 0.3rem; }
+    .step-sub { font-size: 13px; color: #888; margin-bottom: 1.75rem; line-height: 1.6; }
+    .email-highlight { color: #6c63ff; font-weight: 600; }
+    .otp-row { display: flex; gap: 10px; justify-content: center; margin-bottom: 1rem; }
+    .otp-input { width: 44px; height: 52px; border: 0.5px solid #ddd; border-radius: 10px; text-align: center; font-size: 22px; font-weight: 700; color: #111; background: #fafafa; outline: none; transition: border-color 0.15s, background 0.15s; }
+    .otp-input:focus { border-color: #6c63ff; background: #fff; }
+    .otp-input.error { border-color: #e53935; background: #ffebee; }
+    .timer { text-align: center; font-size: 12px; color: #888; margin-bottom: 1.25rem; }
+    .timer span { color: #6c63ff; font-weight: 600; }
+    .timer span.expired { color: #e53935; }
+    .resend { text-align: center; font-size: 12px; color: #888; margin-top: 1rem; }
+    .resend a { color: #6c63ff; cursor: pointer; font-weight: 500; }
+    .error-msg { background: #ffebee; color: #c62828; font-size: 12px; padding: 10px 14px; border-radius: 8px; margin-bottom: 1rem; display: none; }
+    .error-msg.show { display: block; }
+    .success-icon { text-align: center; font-size: 48px; margin-bottom: 1rem; }
+    .back { display: block; text-align: center; margin-top: 1.25rem; font-size: 12px; color: #888; }
+    .back a { color: #6c63ff; font-weight: 500; cursor: pointer; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="logo">
+      <div class="logo-text">Phro<span>nesis</span></div>
+      <div class="logo-sub">φρόνησις — Practical Wisdom</div>
+    </div>
+    <div class="card">
+      <div class="step active" id="step-otp">
+        <div class="step-title">Verify your email</div>
+        <div class="step-sub">We sent a 6-digit code to<br/><span class="email-highlight" id="user-email-display"></span><br/>Enter it below to verify your account.</div>
+        <div class="error-msg" id="otp-error"></div>
+        <div class="otp-row">
+          <input class="otp-input" maxlength="1" id="otp-0" oninput="otpNext(this,0)" onkeydown="otpBack(event,0)"/>
+          <input class="otp-input" maxlength="1" id="otp-1" oninput="otpNext(this,1)" onkeydown="otpBack(event,1)"/>
+          <input class="otp-input" maxlength="1" id="otp-2" oninput="otpNext(this,2)" onkeydown="otpBack(event,2)"/>
+          <input class="otp-input" maxlength="1" id="otp-3" oninput="otpNext(this,3)" onkeydown="otpBack(event,3)"/>
+          <input class="otp-input" maxlength="1" id="otp-4" oninput="otpNext(this,4)" onkeydown="otpBack(event,4)"/>
+          <input class="otp-input" maxlength="1" id="otp-5" oninput="otpNext(this,5)" onkeydown="otpBack(event,5)"/>
+        </div>
+        <div class="timer">Code expires in <span id="timer-text">10:00</span></div>
+        <button class="btn btn-primary btn-full" id="verify-btn" onclick="handleVerify()">Verify email</button>
+        <div class="resend">Didn't receive it? <a onclick="handleResend()">Resend code</a></div>
+        <div class="back"><a onclick="logout()">Sign out</a></div>
+      </div>
+      <div class="step" id="step-success">
+        <div class="success-icon">🎉</div>
+        <div class="step-title" style="text-align:center;">Email verified!</div>
+        <div class="step-sub" style="text-align:center;">Your account is now fully verified. Redirecting to dashboard...</div>
+        <div style="text-align:center;"><div class="spinner" style="border-color:rgba(108,99,255,0.3);border-top-color:#6c63ff;width:28px;height:28px;margin:0 auto;"></div></div>
+      </div>
+    </div>
+  </div>
+  <script src="static/app.js"></script>
+  <script>
+    requireAuth();
+    const user = getUser();
+    if (user.is_verified) window.location.href = '/dashboard';
+    document.getElementById('user-email-display').textContent = user.email;
+    let timerInterval = null;
+    startTimer(600);
+    function otpNext(el, idx) {
+      el.value = el.value.replace(/[^0-9]/g, '');
+      clearErrors();
+      if (el.value && idx < 5) document.getElementById('otp-' + (idx + 1)).focus();
+      if (getOTPValue().length === 6) setTimeout(handleVerify, 300);
+    }
+    function otpBack(e, idx) {
+      if (e.key === 'Backspace') {
+        const el = document.getElementById('otp-' + idx);
+        if (!el.value && idx > 0) document.getElementById('otp-' + (idx - 1)).focus();
+      }
+    }
+    function getOTPValue() { return [0,1,2,3,4,5].map(i => document.getElementById('otp-' + i).value).join(''); }
+    function clearOTP() { [0,1,2,3,4,5].forEach(i => { const el = document.getElementById('otp-' + i); el.value = ''; el.classList.remove('error'); }); document.getElementById('otp-0').focus(); }
+    function markOTPError() { [0,1,2,3,4,5].forEach(i => document.getElementById('otp-' + i).classList.add('error')); }
+    function clearErrors() { document.getElementById('otp-error').classList.remove('show'); [0,1,2,3,4,5].forEach(i => document.getElementById('otp-' + i).classList.remove('error')); }
+    async function handleVerify() {
+      const otp = getOTPValue();
+      const btn = document.getElementById('verify-btn');
+      const err = document.getElementById('otp-error');
+      clearErrors();
+      if (otp.length !== 6) { err.textContent = 'Please enter all 6 digits'; return err.classList.add('show'); }
+      setLoading(btn, true);
+      try {
+        await apiPost('/api/auth/verify-otp', { email: user.email, otp });
+        const updatedUser = { ...user, is_verified: true };
+        saveAuth(getToken(), updatedUser);
+        clearInterval(timerInterval);
+        showStep('step-success');
+        setTimeout(() => { window.location.href = '/dashboard'; }, 2000);
+      } catch (e) { markOTPError(); err.textContent = e.message; err.classList.add('show'); setLoading(btn, false); }
+    }
+    async function handleResend() {
+      try {
+        await apiPost('/api/auth/resend-otp', { email: user.email });
+        clearOTP(); clearInterval(timerInterval); startTimer(600);
+        toast('New code sent! Check your email.');
+      } catch (e) { toast(e.message, 'error'); }
+    }
+    function startTimer(seconds) {
+      let remaining = seconds;
+      const el = document.getElementById('timer-text');
+      timerInterval = setInterval(() => {
+        remaining--;
+        const m = String(Math.floor(remaining / 60)).padStart(2, '0');
+        const s = String(remaining % 60).padStart(2, '0');
+        el.textContent = `${m}:${s}`;
+        if (remaining <= 0) { clearInterval(timerInterval); el.textContent = 'Expired'; el.classList.add('expired'); }
+      }, 1000);
+    }
+    function showStep(id) { document.querySelectorAll('.step').forEach(s => s.classList.remove('active')); document.getElementById(id).classList.add('active'); }
+    document.getElementById('otp-0').focus();
+  </script>
+</body>
+</html>

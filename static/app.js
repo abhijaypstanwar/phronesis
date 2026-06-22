@@ -4,24 +4,10 @@ function saveAuth(token, user) {
   localStorage.setItem('token', token);
   localStorage.setItem('user', JSON.stringify(user));
 }
-
-function getToken() {
-  return localStorage.getItem('token');
-}
-
-function getUser() {
-  const u = localStorage.getItem('user');
-  return u ? JSON.parse(u) : null;
-}
-
-function clearAuth() {
-  localStorage.removeItem('token');
-  localStorage.removeItem('user');
-}
-
-function isLoggedIn() {
-  return !!getToken();
-}
+function getToken() { return localStorage.getItem('token'); }
+function getUser() { const u = localStorage.getItem('user'); return u ? JSON.parse(u) : null; }
+function clearAuth() { localStorage.removeItem('token'); localStorage.removeItem('user'); }
+function isLoggedIn() { return !!getToken(); }
 
 async function apiPost(endpoint, body) {
   const res = await fetch(`${API}${endpoint}`, {
@@ -47,6 +33,17 @@ async function apiPatch(endpoint) {
   const res = await fetch(`${API}${endpoint}`, {
     method: 'PATCH',
     headers: { 'Authorization': `Bearer ${getToken()}` },
+  });
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.detail || 'Something went wrong');
+  return data;
+}
+
+async function apiPatchBody(endpoint, body) {
+  const res = await fetch(`${API}${endpoint}`, {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${getToken()}` },
+    body: JSON.stringify(body),
   });
   const data = await res.json();
   if (!res.ok) throw new Error(data.detail || 'Something went wrong');
@@ -84,6 +81,8 @@ function logout() {
 function redirectByRole(user) {
   if (user.role === 'admin') {
     window.location.href = '/admin';
+  } else if (!user.is_verified) {
+    window.location.href = '/verify';
   } else {
     window.location.href = '/dashboard';
   }

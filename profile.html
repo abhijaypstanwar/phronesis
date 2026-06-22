@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Phronesis — My Profile</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="static/style.css"/>
+  <style>
+    body { background: #f4f4f6; min-height: 100vh; }
+    .page { max-width: 680px; margin: 2rem auto; padding: 0 1.5rem; animation: fadeUp 0.5s ease forwards; }
+    .back-btn { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; color: var(--text-muted); cursor: pointer; margin-bottom: 1.5rem; background: none; border: none; padding: 0; font-family: var(--font); }
+    .back-btn:hover { color: var(--text-primary); }
+    .profile-hero { background: #0a0a0a; border-radius: 16px; padding: 2rem; display: flex; align-items: center; gap: 1.5rem; margin-bottom: 1rem; position: relative; overflow: hidden; }
+    .profile-hero::before { content: ''; position: absolute; top: -40px; right: -40px; width: 200px; height: 200px; border-radius: 50%; background: rgba(108,99,255,0.15); }
+    .profile-avatar-lg { width: 72px; height: 72px; border-radius: 50%; background: #6c63ff; display: flex; align-items: center; justify-content: center; font-size: 28px; font-weight: 700; color: #fff; flex-shrink: 0; position: relative; z-index: 1; border: 3px solid rgba(108,99,255,0.4); }
+    .profile-hero-info { position: relative; z-index: 1; }
+    .profile-hero-name { font-size: 1.4rem; font-weight: 700; color: #fff; margin-bottom: 4px; }
+    .profile-hero-email { font-size: 13px; color: #666; margin-bottom: 10px; }
+    .profile-hero-badges { display: flex; gap: 8px; flex-wrap: wrap; }
+    .section-card { background: #fff; border: 0.5px solid var(--border); border-radius: var(--radius-md); margin-bottom: 1rem; overflow: hidden; }
+    .section-card-header { padding: 1rem 1.25rem; border-bottom: 0.5px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+    .section-card-header h3 { font-size: 14px; font-weight: 600; color: var(--text-primary); }
+    .section-card-body { padding: 1.25rem; }
+    .info-row { display: flex; align-items: center; justify-content: space-between; padding: 10px 0; border-bottom: 0.5px solid #f5f5f5; }
+    .info-row:last-child { border-bottom: none; }
+    .info-label { font-size: 12px; color: var(--text-muted); font-weight: 500; text-transform: uppercase; letter-spacing: 0.04em; }
+    .info-value { font-size: 13px; color: var(--text-primary); font-weight: 500; }
+    .edit-toggle { font-size: 12px; color: var(--brand); font-weight: 500; cursor: pointer; background: none; border: none; font-family: var(--font); padding: 0; }
+    .edit-form { display: none; }
+    .edit-form.show { display: block; }
+    .static-info { display: block; }
+    .static-info.hide { display: none; }
+    .strength-bar { height: 3px; border-radius: 2px; background: #eee; margin-top: 6px; overflow: hidden; }
+    .strength-fill { height: 100%; border-radius: 2px; transition: width 0.3s, background 0.3s; width: 0%; }
+    .strength-label { font-size: 11px; color: #888; margin-top: 4px; }
+    .danger-zone { background: #fff; border: 0.5px solid #ffcdd2; border-radius: var(--radius-md); padding: 1.25rem; margin-bottom: 1rem; }
+    .danger-zone h3 { font-size: 13px; font-weight: 600; color: var(--danger); margin-bottom: 0.5rem; }
+    .danger-zone p { font-size: 12px; color: var(--text-muted); margin-bottom: 1rem; }
+    .error-msg { background: #ffebee; color: #c62828; font-size: 12px; padding: 10px 14px; border-radius: 8px; margin-bottom: 1rem; display: none; }
+    .error-msg.show { display: block; }
+    .success-msg { background: #e8f5e9; color: #2e7d32; font-size: 12px; padding: 10px 14px; border-radius: 8px; margin-bottom: 1rem; display: none; }
+    .success-msg.show { display: block; }
+  </style>
+</head>
+<body>
+  <nav class="navbar">
+    <div class="navbar-logo">Phro<span style="color:#6c63ff">nesis</span></div>
+    <div class="navbar-right">
+      <div class="avatar" id="nav-avatar">?</div>
+      <span style="font-size:13px;color:#aaa;" id="nav-name"></span>
+      <button class="btn btn-ghost-light btn-sm" onclick="logout()">Sign out</button>
+    </div>
+  </nav>
+  <div class="page">
+    <button class="back-btn" onclick="history.back()">← Back</button>
+    <div class="profile-hero">
+      <div class="profile-avatar-lg" id="hero-avatar">?</div>
+      <div class="profile-hero-info">
+        <div class="profile-hero-name" id="hero-name">Loading...</div>
+        <div class="profile-hero-email" id="hero-email"></div>
+        <div class="profile-hero-badges" id="hero-badges"></div>
+      </div>
+    </div>
+    <div class="section-card">
+      <div class="section-card-header"><h3>Account information</h3><button class="edit-toggle" id="info-edit-btn" onclick="toggleInfoEdit()">Edit</button></div>
+      <div class="section-card-body">
+        <div class="error-msg" id="info-error"></div>
+        <div class="success-msg" id="info-success"></div>
+        <div class="static-info" id="info-static">
+          <div class="info-row"><span class="info-label">Full name</span><span class="info-value" id="info-name">—</span></div>
+          <div class="info-row"><span class="info-label">Email</span><span class="info-value" id="info-email">—</span></div>
+          <div class="info-row"><span class="info-label">Role</span><span class="info-value" id="info-role">—</span></div>
+          <div class="info-row"><span class="info-label">Member since</span><span class="info-value" id="info-joined">—</span></div>
+          <div class="info-row"><span class="info-label">Email verified</span><span class="info-value" id="info-verified">—</span></div>
+        </div>
+        <div class="edit-form" id="info-edit">
+          <div class="field"><label>Full name</label><input type="text" id="edit-name" placeholder="Your name"/></div>
+          <div class="field"><label>Email</label><input type="email" id="edit-email" disabled style="opacity:0.5;cursor:not-allowed;"/></div>
+          <div style="display:flex;gap:8px;margin-top:0.5rem;">
+            <button class="btn btn-dark btn-sm" id="save-info-btn" onclick="saveInfo()">Save changes</button>
+            <button class="btn btn-outline btn-sm" onclick="toggleInfoEdit()">Cancel</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="section-card">
+      <div class="section-card-header"><h3>Change password</h3></div>
+      <div class="section-card-body">
+        <div class="error-msg" id="pw-error"></div>
+        <div class="success-msg" id="pw-success"></div>
+        <div class="field"><label>Current password</label><input type="password" id="current-pw" placeholder="Enter your current password"/></div>
+        <div class="field">
+          <label>New password</label>
+          <input type="password" id="new-pw" placeholder="Min. 8 characters" oninput="checkStrength(this.value)"/>
+          <div class="strength-bar"><div class="strength-fill" id="strength-fill"></div></div>
+          <div class="strength-label" id="strength-label"></div>
+        </div>
+        <div class="field"><label>Confirm new password</label><input type="password" id="confirm-pw" placeholder="Repeat new password"/></div>
+        <button class="btn btn-dark btn-sm" id="save-pw-btn" onclick="savePassword()">Update password</button>
+      </div>
+    </div>
+    <div class="danger-zone">
+      <h3>⚠ Danger zone</h3>
+      <p>Once you delete your account, there is no going back. All your data will be permanently removed.</p>
+      <button class="btn btn-danger btn-sm" onclick="toast('Account deletion coming soon', 'error')">Delete my account</button>
+    </div>
+  </div>
+  <script src="static/app.js"></script>
+  <script>
+    requireAuth();
+    let user = getUser();
+    let editingInfo = false;
+    function populatePage(u) {
+      document.getElementById('nav-avatar').textContent  = initials(u.name);
+      document.getElementById('nav-name').textContent    = u.name;
+      document.getElementById('hero-avatar').textContent = initials(u.name);
+      document.getElementById('hero-name').textContent   = u.name;
+      document.getElementById('hero-email').textContent  = u.email;
+      document.getElementById('hero-badges').innerHTML = `
+        <span class="pill ${u.role === 'admin' ? 'pill-purple' : 'pill-gray'}">${u.role}</span>
+        <span class="pill ${u.is_verified ? 'pill-green' : 'pill-red'}">${u.is_verified ? '✓ Verified' : '✗ Unverified'}</span>`;
+      document.getElementById('info-name').textContent   = u.name;
+      document.getElementById('info-email').textContent  = u.email;
+      document.getElementById('info-role').textContent   = u.role;
+      document.getElementById('info-joined').textContent = new Date(u.created_at).toLocaleDateString('en-GB', {day:'numeric',month:'long',year:'numeric'});
+      document.getElementById('info-verified').innerHTML = u.is_verified
+        ? '<span style="color:#2e7d32;font-weight:500;">✓ Yes</span>'
+        : '<span style="color:#c62828;font-weight:500;">✗ No — <a href="/verify" style="color:#6c63ff">verify now</a></span>';
+      document.getElementById('edit-name').value  = u.name;
+      document.getElementById('edit-email').value = u.email;
+    }
+    populatePage(user);
+    function toggleInfoEdit() {
+      editingInfo = !editingInfo;
+      document.getElementById('info-static').classList.toggle('hide', editingInfo);
+      document.getElementById('info-edit').classList.toggle('show', editingInfo);
+      document.getElementById('info-edit-btn').textContent = editingInfo ? 'Cancel' : 'Edit';
+      document.getElementById('info-error').classList.remove('show');
+      document.getElementById('info-success').classList.remove('show');
+    }
+    async function saveInfo() {
+      const name = document.getElementById('edit-name').value.trim();
+      const btn  = document.getElementById('save-info-btn');
+      const err  = document.getElementById('info-error');
+      const succ = document.getElementById('info-success');
+      err.classList.remove('show'); succ.classList.remove('show');
+      if (!name) { err.textContent = 'Name cannot be blank'; return err.classList.add('show'); }
+      setLoading(btn, true);
+      try {
+        const updated = await apiPatchBody(`/api/auth/profile?name=${encodeURIComponent(name)}`, {});
+        saveAuth(getToken(), updated); user = updated; populatePage(updated);
+        toggleInfoEdit(); succ.textContent = 'Name updated successfully!'; succ.classList.add('show');
+        toast('Profile updated!');
+      } catch (e) { err.textContent = e.message; err.classList.add('show'); setLoading(btn, false); }
+    }
+    async function savePassword() {
+      const currPw = document.getElementById('current-pw').value;
+      const newPw  = document.getElementById('new-pw').value;
+      const confPw = document.getElementById('confirm-pw').value;
+      const btn    = document.getElementById('save-pw-btn');
+      const err    = document.getElementById('pw-error');
+      const succ   = document.getElementById('pw-success');
+      err.classList.remove('show'); succ.classList.remove('show');
+      if (!currPw || !newPw || !confPw) { err.textContent = 'Please fill in all fields'; return err.classList.add('show'); }
+      if (newPw.length < 8) { err.textContent = 'New password must be at least 8 characters'; return err.classList.add('show'); }
+      if (newPw !== confPw) { err.textContent = 'Passwords do not match'; return err.classList.add('show'); }
+      setLoading(btn, true);
+      try {
+        await apiPatchBody(`/api/auth/profile?current_password=${encodeURIComponent(currPw)}&new_password=${encodeURIComponent(newPw)}`, {});
+        succ.textContent = 'Password updated successfully!'; succ.classList.add('show');
+        document.getElementById('current-pw').value = '';
+        document.getElementById('new-pw').value = '';
+        document.getElementById('confirm-pw').value = '';
+        document.getElementById('strength-fill').style.width = '0%';
+        document.getElementById('strength-label').textContent = '';
+        toast('Password changed!');
+      } catch (e) { err.textContent = e.message; err.classList.add('show'); }
+      setLoading(btn, false);
+    }
+    function checkStrength(pw) {
+      const fill = document.getElementById('strength-fill');
+      const label = document.getElementById('strength-label');
+      let score = 0;
+      if (pw.length >= 8) score++; if (pw.length >= 12) score++;
+      if (/[A-Z]/.test(pw)) score++; if (/[0-9]/.test(pw)) score++;
+      if (/[^A-Za-z0-9]/.test(pw)) score++;
+      const levels = [
+        {pct:'0%',color:'#eee',text:''},{pct:'25%',color:'#e53935',text:'Weak'},
+        {pct:'50%',color:'#fb8c00',text:'Fair'},{pct:'75%',color:'#fdd835',text:'Good'},
+        {pct:'90%',color:'#43a047',text:'Strong'},{pct:'100%',color:'#1b5e20',text:'Very strong'},
+      ];
+      const lvl = levels[Math.min(score, 5)];
+      fill.style.width = lvl.pct; fill.style.background = lvl.color;
+      label.textContent = lvl.text; label.style.color = lvl.color;
+    }
+  </script>
+</body>
+</html>
