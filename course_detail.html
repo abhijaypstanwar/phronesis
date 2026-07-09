@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Phronesis — Course</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="/static/style.css"/>
+  <style>
+    body{background:#f4f4f6;min-height:100vh}
+    .page{max-width:960px;margin:0 auto;padding:2rem 1.5rem 4rem}
+    .back-btn{display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:500;color:var(--text-muted);cursor:pointer;margin-bottom:1.5rem;background:none;border:none;padding:0;font-family:var(--font)}
+    .back-btn:hover{color:var(--brand)}
+    .course-hero{background:#0a0a14;border-radius:16px;padding:2.5rem;margin-bottom:1.5rem;position:relative;overflow:hidden}
+    .course-hero::before{content:'';position:absolute;top:-60px;right:-60px;width:250px;height:250px;border-radius:50%;background:radial-gradient(circle,rgba(108,99,255,0.15) 0%,transparent 70%)}
+    .course-hero-tag{background:rgba(108,99,255,0.2);color:#a89cff;font-size:11px;font-weight:500;padding:4px 12px;border-radius:100px;display:inline-block;margin-bottom:1rem}
+    .course-hero h1{font-size:1.75rem;font-weight:700;color:#fff;margin-bottom:0.75rem;line-height:1.3;position:relative;z-index:1}
+    .course-hero p{font-size:14px;color:#888;line-height:1.7;margin-bottom:1.5rem;position:relative;z-index:1}
+    .course-hero-meta{display:flex;align-items:center;gap:1.5rem;font-size:13px;color:#666;position:relative;z-index:1}
+    .course-hero-actions{display:flex;align-items:center;gap:12px;margin-top:1.5rem;position:relative;z-index:1;flex-wrap:wrap}
+    .layout{display:grid;grid-template-columns:1fr 300px;gap:1.5rem}
+    .lessons-section h3{font-size:15px;font-weight:600;color:var(--text-primary);margin-bottom:1rem}
+    .lesson-item{background:#fff;border:0.5px solid var(--border);border-radius:var(--radius-sm);padding:1rem 1.25rem;margin-bottom:8px;display:flex;align-items:center;gap:12px;cursor:pointer;transition:all 0.15s}
+    .lesson-item:hover{border-color:var(--brand);box-shadow:0 2px 8px rgba(108,99,255,0.1)}
+    .lesson-item.locked{opacity:0.6;cursor:not-allowed}
+    .lesson-item.completed{border-left:3px solid #2e7d32}
+    .lesson-number{width:28px;height:28px;border-radius:50%;background:var(--bg-surface);border:0.5px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;color:var(--text-muted);flex-shrink:0}
+    .lesson-number.done{background:#e8f5e9;border-color:#c8e6c9;color:#2e7d32}
+    .lesson-info{flex:1}
+    .lesson-title{font-size:13px;font-weight:500;color:var(--text-primary);margin-bottom:3px}
+    .lesson-meta-text{font-size:11px;color:var(--text-muted)}
+    .lesson-free-badge{font-size:10px;background:#e8f5e9;color:#2e7d32;padding:2px 7px;border-radius:20px;font-weight:500;margin-left:6px}
+    .sidebar-card{background:#fff;border:0.5px solid var(--border);border-radius:var(--radius-md);padding:1.25rem;margin-bottom:1rem}
+    .sidebar-card h3{font-size:14px;font-weight:600;color:var(--text-primary);margin-bottom:1rem}
+    .progress-bar{height:8px;background:#eee;border-radius:4px;overflow:hidden;margin-bottom:6px}
+    .progress-fill{height:100%;background:var(--brand);border-radius:4px;transition:width 0.6s ease}
+    .progress-text{display:flex;justify-content:space-between;font-size:12px;color:var(--text-muted)}
+    .info-row{display:flex;justify-content:space-between;padding:8px 0;border-bottom:0.5px solid #f5f5f5;font-size:13px}
+    .info-row:last-child{border-bottom:none}
+    .info-row span:first-child{color:var(--text-muted)}
+    .info-row span:last-child{font-weight:500}
+    .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:1000;align-items:center;justify-content:center;padding:2rem}
+    .modal-overlay.show{display:flex}
+    .lesson-modal{background:#fff;border-radius:16px;width:100%;max-width:700px;max-height:85vh;overflow-y:auto}
+    .modal-header{padding:1.25rem 1.5rem;border-bottom:0.5px solid var(--border);display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;background:#fff;z-index:10}
+    .modal-header h3{font-size:15px;font-weight:600}
+    .modal-close{background:none;border:none;font-size:22px;cursor:pointer;color:var(--text-muted);padding:0}
+    .modal-body{padding:1.5rem}
+    .lesson-content{font-size:14px;line-height:1.8;color:var(--text-primary);white-space:pre-wrap;font-family:'Courier New',monospace}
+    .modal-footer{padding:1rem 1.5rem;border-top:0.5px solid var(--border);display:flex;justify-content:space-between;align-items:center;background:#fafafa}
+    /* study plan modal */
+    .plan-content{font-size:13px;line-height:1.8;color:var(--text-primary);white-space:pre-wrap;background:var(--bg-surface);padding:1.25rem;border-radius:var(--radius-md);border:0.5px solid var(--border);max-height:420px;overflow-y:auto}
+    .plan-content strong{color:var(--brand)}
+    .completed-badge{background:#e8f5e9;color:#2e7d32;font-size:12px;padding:4px 12px;border-radius:20px;font-weight:500}
+  </style>
+</head>
+<body>
+  <nav class="navbar">
+    <div class="navbar-logo">Phro<span style="color:#6c63ff">nesis</span></div>
+    <div class="navbar-right">
+      <div class="avatar" id="nav-avatar">?</div>
+      <span style="font-size:13px;color:#aaa" id="nav-name"></span>
+      <button class="btn btn-ghost-light btn-sm" onclick="logout()">Sign out</button>
+    </div>
+  </nav>
+  <div class="page">
+    <button class="back-btn" onclick="window.location.href='/courses'">← Back to courses</button>
+    <div class="course-hero" id="course-hero">
+      <div class="course-hero-tag">Course</div>
+      <h1 id="hero-title">Loading...</h1>
+      <p id="hero-desc"></p>
+      <div class="course-hero-meta">
+        <span id="hero-lessons">— lessons</span>
+        <span id="hero-duration"></span>
+        <span id="hero-price"></span>
+      </div>
+      <div class="course-hero-actions">
+        <button class="btn btn-primary" id="enroll-btn" onclick="handleEnroll()" style="display:none">Enroll now — Free</button>
+        <button class="btn btn-ghost-light" id="unenroll-btn" onclick="handleUnenroll()" style="display:none">Unenroll</button>
+        <span id="enrolled-label" style="display:none;color:#a89cff;font-size:13px;font-weight:500">✓ Enrolled</span>
+        <button class="btn btn-ghost-light" id="study-plan-btn" onclick="openStudyPlanModal()" style="display:none">📅 Study plan</button>
+      </div>
+    </div>
+    <div class="layout">
+      <div class="lessons-section">
+        <h3 id="lessons-heading">Lessons</h3>
+        <div id="lessons-list"></div>
+      </div>
+      <div>
+        <div class="sidebar-card" id="progress-card" style="display:none">
+          <h3>Your progress</h3>
+          <div class="progress-bar"><div class="progress-fill" id="progress-fill" style="width:0%"></div></div>
+          <div class="progress-text"><span id="progress-text">0 of 0 lessons</span><span id="progress-pct">0%</span></div>
+          <div id="completed-badge-wrap" style="margin-top:10px;display:none"><span class="completed-badge">🎉 Course completed!</span></div>
+        </div>
+        <div class="sidebar-card">
+          <h3>Course info</h3>
+          <div class="info-row"><span>Lessons</span><span id="info-lessons">—</span></div>
+          <div class="info-row"><span>Duration</span><span id="info-duration">—</span></div>
+          <div class="info-row"><span>Price</span><span id="info-price">—</span></div>
+          <div class="info-row"><span>Access</span><span id="info-access">—</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- lesson modal -->
+  <div class="modal-overlay" id="lesson-modal">
+    <div class="lesson-modal">
+      <div class="modal-header">
+        <h3 id="modal-lesson-title">Lesson</h3>
+        <button class="modal-close" onclick="closeLesson()">×</button>
+      </div>
+      <div class="modal-body"><div class="lesson-content" id="modal-lesson-content"></div></div>
+      <div class="modal-footer">
+        <span id="modal-lesson-meta" style="font-size:12px;color:var(--text-muted)"></span>
+        <button class="btn btn-primary btn-sm" id="complete-btn" onclick="toggleComplete()" style="display:none">Mark as complete</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- study plan modal -->
+  <div class="modal-overlay" id="study-plan-modal">
+    <div class="lesson-modal" style="max-width:620px">
+      <div class="modal-header">
+        <h3>📅 AI Study Plan</h3>
+        <button class="modal-close" onclick="closeStudyPlanModal()">×</button>
+      </div>
+      <div class="modal-body">
+        <div id="plan-form">
+          <p style="font-size:13px;color:var(--text-muted);margin-bottom:1.25rem;line-height:1.6">
+            Tell us your target completion date and we'll build a personalised day-by-day study schedule for your remaining lessons.
+          </p>
+          <div class="field"><label>Target completion date</label><input type="date" id="target-date" style="width:100%"/></div>
+          <button class="btn btn-primary btn-full" id="generate-btn" onclick="generatePlan()">📅 Generate my study plan</button>
+        </div>
+        <div id="plan-result" style="display:none">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem">
+            <span style="font-size:12px;color:var(--text-muted)">📅 Personalised schedule</span>
+            <button class="btn btn-outline btn-sm" onclick="showPlanForm()">Regenerate</button>
+          </div>
+          <div class="plan-content" id="plan-content"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="/static/app.js"></script>
+  <script>
+    requireAuth();
+    const user      = getUser();
+    const courseId  = window.location.pathname.split('/').pop();
+    document.getElementById('nav-name').textContent   = user.name;
+    document.getElementById('nav-avatar').textContent = initials(user.name);
+
+    let courseData = null, enrolled = false, completedIds = new Set(), currentLesson = null;
+
+    async function loadCourse() {
+      try {
+        // check enrollment first
+        try {
+          const myEnrollments = await apiGet('/api/courses/my');
+          enrolled = myEnrollments.some(e => e.course_id === courseId);
+        } catch(_) { enrolled = false; }
+        courseData = await apiGet(`/api/courses/${courseId}`);
+        renderHero();
+        renderLessons();
+        if (enrolled) await loadProgress();
+      } catch(err) { toast(err.message, 'error'); }
+    }
+
+    function renderHero() {
+      document.title = `Phronesis — ${courseData.title}`;
+      document.getElementById('hero-title').textContent    = courseData.title;
+      document.getElementById('hero-desc').textContent     = courseData.description || '';
+      document.getElementById('hero-lessons').textContent  = `${courseData.total_lessons} lessons`;
+      document.getElementById('hero-duration').textContent = courseData.total_duration_min ? `${courseData.total_duration_min} min total` : '';
+      document.getElementById('hero-price').textContent    = courseData.price === 0 ? 'Free' : `₹${courseData.price}`;
+      document.getElementById('info-lessons').textContent  = courseData.total_lessons;
+      document.getElementById('info-duration').textContent = courseData.total_duration_min ? `${courseData.total_duration_min} min` : 'Self-paced';
+      document.getElementById('info-price').textContent    = courseData.price === 0 ? 'Free' : `₹${courseData.price}`;
+      if (enrolled) {
+        document.getElementById('enrolled-label').style.display  = 'inline';
+        document.getElementById('unenroll-btn').style.display    = 'inline-flex';
+        document.getElementById('study-plan-btn').style.display  = 'inline-flex';
+        document.getElementById('info-access').textContent       = 'Full access';
+        document.getElementById('progress-card').style.display   = 'block';
+      } else {
+        document.getElementById('enroll-btn').style.display      = 'inline-flex';
+        document.getElementById('enroll-btn').textContent        = courseData.price === 0 ? 'Enroll now — Free' : `Enroll — ₹${courseData.price}`;
+        document.getElementById('info-access').textContent       = 'Enroll to unlock';
+      }
+    }
+
+    function renderLessons() {
+      document.getElementById('lessons-heading').textContent = `Lessons (${courseData.total_lessons})`;
+      const list = document.getElementById('lessons-list');
+      if (!courseData.lessons.length) { list.innerHTML = '<p style="color:var(--text-muted);font-size:13px">No lessons yet.</p>'; return; }
+      list.innerHTML = courseData.lessons.map(l => {
+        const done   = completedIds.has(l.id);
+        const locked = l.is_locked && !l.is_free;
+        return `<div class="lesson-item ${locked?'locked':''} ${done?'completed':''}" onclick="${locked?'':` openLesson('${l.id}')`}">
+          <div class="lesson-number ${done?'done':''}">${done?'✓':l.order}</div>
+          <div class="lesson-info">
+            <div class="lesson-title">${l.title}${l.is_free?'<span class="lesson-free-badge">Preview</span>':''}</div>
+            <div class="lesson-meta-text">${l.duration_min?l.duration_min+' min':'No duration'}</div>
+          </div>
+          <div style="font-size:14px;color:var(--text-muted)">${locked?'🔒':done?'✓':'→'}</div>
+        </div>`;
+      }).join('');
+    }
+
+    async function loadProgress() {
+      try {
+        const prog = await apiGet(`/api/courses/${courseId}/progress`);
+        completedIds = new Set();
+        document.getElementById('progress-fill').style.width = prog.percentage + '%';
+        document.getElementById('progress-text').textContent = `${prog.completed_lessons} of ${prog.total_lessons} lessons`;
+        document.getElementById('progress-pct').textContent  = prog.percentage + '%';
+        if (prog.is_completed) document.getElementById('completed-badge-wrap').style.display = 'block';
+        renderLessons();
+      } catch(_) {}
+    }
+
+    function openLesson(lessonId) {
+      const lesson = courseData.lessons.find(l => l.id === lessonId);
+      if (!lesson) return;
+      currentLesson = lesson;
+      document.getElementById('modal-lesson-title').textContent   = lesson.title;
+      document.getElementById('modal-lesson-content').textContent = lesson.content || 'No content yet.';
+      document.getElementById('modal-lesson-meta').textContent    = lesson.duration_min ? `${lesson.duration_min} min read` : '';
+      const done = completedIds.has(lessonId);
+      const btn  = document.getElementById('complete-btn');
+      btn.style.display   = enrolled ? 'inline-flex' : 'none';
+      btn.textContent     = done ? '✓ Completed' : 'Mark as complete';
+      btn.style.background = done ? '#2e7d32' : '';
+      document.getElementById('lesson-modal').classList.add('show');
+    }
+    function closeLesson() { document.getElementById('lesson-modal').classList.remove('show'); currentLesson = null; }
+
+    async function toggleComplete() {
+      if (!currentLesson || !enrolled) return;
+      const done = completedIds.has(currentLesson.id);
+      try {
+        await apiPost(`/api/courses/${courseId}/lessons/${currentLesson.id}/progress`, { completed: !done });
+        if (done) completedIds.delete(currentLesson.id); else completedIds.add(currentLesson.id);
+        const btn = document.getElementById('complete-btn');
+        btn.textContent     = done ? 'Mark as complete' : '✓ Completed';
+        btn.style.background = done ? '' : '#2e7d32';
+        await loadProgress();
+        toast(done ? 'Marked as incomplete' : 'Lesson completed! 🎉');
+      } catch(err) { toast(err.message, 'error'); }
+    }
+
+    async function handleEnroll() {
+      const btn = document.getElementById('enroll-btn');
+      setLoading(btn, true);
+      try {
+        await apiPost(`/api/courses/${courseId}/enroll`, {});
+        toast('Enrolled successfully! 🎉');
+        await loadCourse();
+      } catch(err) { toast(err.message, 'error'); setLoading(btn, false); }
+    }
+
+    async function handleUnenroll() {
+      if (!confirm('Are you sure you want to unenroll? Your progress will be lost.')) return;
+      try { await apiDelete(`/api/courses/${courseId}/enroll`); toast('Unenrolled'); await loadCourse(); }
+      catch(err) { toast(err.message, 'error'); }
+    }
+
+    // ── Study plan ──
+    async function openStudyPlanModal() {
+      const tomorrow = new Date(); tomorrow.setDate(tomorrow.getDate()+1);
+      document.getElementById('target-date').min   = tomorrow.toISOString().split('T')[0];
+      document.getElementById('target-date').value = '';
+      try {
+        const existing = await apiGet(`/api/courses/${courseId}/study-plan`);
+        if (existing.plan) { renderPlan(existing.plan); }
+        else { showPlanForm(); }
+      } catch(_) { showPlanForm(); }
+      document.getElementById('study-plan-modal').classList.add('show');
+    }
+    function closeStudyPlanModal() { document.getElementById('study-plan-modal').classList.remove('show'); }
+    function showPlanForm() { document.getElementById('plan-form').style.display='block'; document.getElementById('plan-result').style.display='none'; }
+    function renderPlan(plan) {
+      document.getElementById('plan-content').textContent = plan;
+      document.getElementById('plan-form').style.display   = 'none';
+      document.getElementById('plan-result').style.display = 'block';
+    }
+    async function generatePlan() {
+      const targetDate = document.getElementById('target-date').value;
+      const btn        = document.getElementById('generate-btn');
+      if (!targetDate) { toast('Please pick a target date', 'error'); return; }
+      setLoading(btn, true);
+      try {
+        const result = await apiPost(`/api/courses/${courseId}/study-plan?target_date=${targetDate}`, {});
+        renderPlan(result.plan);
+        toast('Study plan generated! 📅');
+      } catch(err) { toast(err.message, 'error'); setLoading(btn, false); }
+    }
+
+    loadCourse();
+  </script>
+</body>
+</html>

@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Phronesis — Courses</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="/static/style.css"/>
+  <style>
+    body{background:#f4f4f6;min-height:100vh}
+    .layout{display:flex;min-height:calc(100vh - 56px)}
+    .sidebar{width:220px;background:#fff;border-right:0.5px solid var(--border);padding:1.5rem 1rem;flex-shrink:0}
+    .sidebar-section{font-size:10px;font-weight:600;color:var(--text-muted);letter-spacing:0.08em;text-transform:uppercase;padding:0 10px;margin-bottom:8px;margin-top:1.5rem}
+    .sidebar-section:first-child{margin-top:0}
+    .nav-item{display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:var(--radius-sm);font-size:13px;color:var(--text-secondary);cursor:pointer;transition:all 0.15s;margin-bottom:2px}
+    .nav-item:hover{background:var(--bg-surface);color:var(--text-primary)}
+    .nav-item.active{background:#eeecff;color:#4a43b8;font-weight:500}
+    .nav-icon{font-size:16px;width:20px;text-align:center}
+    .main{flex:1;padding:2rem}
+    .page-header{margin-bottom:1.5rem}
+    .page-header h2{font-size:1.4rem;font-weight:700;color:var(--text-primary);margin-bottom:4px}
+    .page-header p{font-size:13px;color:var(--text-muted);margin:0}
+    .filters{display:flex;align-items:center;gap:10px;margin-bottom:1.5rem;flex-wrap:wrap}
+    .search-input{height:38px;border:0.5px solid var(--border);border-radius:var(--radius-sm);padding:0 14px;font-size:13px;width:260px;outline:none;background:#fff}
+    .search-input:focus{border-color:var(--brand)}
+    .filter-pill{height:34px;padding:0 16px;border-radius:100px;font-size:12px;font-weight:500;border:0.5px solid var(--border);background:#fff;color:var(--text-secondary);cursor:pointer;font-family:var(--font);transition:all 0.15s}
+    .filter-pill.active{background:var(--brand);color:#fff;border-color:var(--brand)}
+    .courses-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+    .course-card{background:#fff;border:0.5px solid var(--border);border-radius:var(--radius-md);overflow:hidden;cursor:pointer;transition:box-shadow 0.15s,transform 0.1s}
+    .course-card:hover{box-shadow:0 4px 20px rgba(0,0,0,0.08);transform:translateY(-2px)}
+    .course-thumb{width:100%;height:130px;background:linear-gradient(135deg,rgba(108,99,255,0.12),rgba(108,99,255,0.24));display:flex;align-items:center;justify-content:center;font-size:36px;position:relative}
+    .course-price{position:absolute;top:10px;right:10px;background:#fff;border-radius:100px;padding:3px 10px;font-size:11px;font-weight:600;border:0.5px solid var(--border)}
+    .course-price.free{background:#e8f5e9;color:#2e7d32;border-color:#c8e6c9}
+    .course-body{padding:1rem}
+    .course-tag{font-size:10px;font-weight:600;padding:3px 8px;border-radius:20px;background:#eeecff;color:#4a43b8;display:inline-block;margin-bottom:8px;text-transform:uppercase;letter-spacing:0.04em}
+    .course-title{font-size:14px;font-weight:600;color:var(--text-primary);margin-bottom:6px;line-height:1.4}
+    .course-desc{font-size:12px;color:var(--text-muted);margin-bottom:12px;line-height:1.6;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+    .course-meta{display:flex;align-items:center;justify-content:space-between;font-size:11px;color:var(--text-muted);padding-top:10px;border-top:0.5px solid var(--border)}
+    .course-enrolled-badge{display:inline-flex;align-items:center;gap:4px;background:#e8f5e9;color:#2e7d32;font-size:11px;font-weight:500;padding:3px 8px;border-radius:20px}
+    .empty-state{text-align:center;padding:4rem 2rem;grid-column:1/-1}
+    .empty-state p{font-size:14px;color:var(--text-muted);margin-top:1rem}
+    .skeleton{background:#eee;border-radius:var(--radius-md);animation:shimmer 1.5s infinite}
+    @keyframes shimmer{0%,100%{opacity:1}50%{opacity:0.5}}
+    .profile-menu{position:relative}
+    .profile-trigger{display:flex;align-items:center;gap:8px;cursor:pointer;padding:4px 8px;border-radius:var(--radius-sm)}
+    .profile-trigger:hover{background:rgba(255,255,255,0.08)}
+    .profile-dropdown{display:none;position:absolute;top:calc(100% + 8px);right:0;background:#fff;border:0.5px solid var(--border);border-radius:var(--radius-md);padding:0.5rem;min-width:180px;box-shadow:0 8px 24px rgba(0,0,0,0.1);z-index:200}
+    .profile-dropdown.open{display:block}
+    .dropdown-item{padding:8px 12px;font-size:13px;color:var(--text-secondary);border-radius:var(--radius-sm);cursor:pointer}
+    .dropdown-item:hover{background:var(--bg-surface);color:var(--text-primary)}
+    .dropdown-item.danger{color:var(--danger)}
+    .dropdown-divider{height:0.5px;background:var(--border);margin:4px 0}
+  </style>
+</head>
+<body>
+  <nav class="navbar">
+    <div class="navbar-logo">Phro<span style="color:#6c63ff">nesis</span></div>
+    <div class="navbar-right">
+      <div class="profile-menu">
+        <div class="profile-trigger" onclick="toggleDropdown()">
+          <div class="avatar" id="nav-avatar">?</div>
+          <span style="font-size:13px;color:#aaa" id="nav-name"></span>
+          <span style="color:#555;font-size:10px">▼</span>
+        </div>
+        <div class="profile-dropdown" id="profile-dropdown">
+          <div class="dropdown-item" onclick="window.location.href='/profile'">👤 My profile</div>
+          <div class="dropdown-item" onclick="window.location.href='/dashboard'">🏠 Dashboard</div>
+          <div class="dropdown-divider"></div>
+          <div class="dropdown-item danger" onclick="logout()">Sign out</div>
+        </div>
+      </div>
+    </div>
+  </nav>
+  <div class="layout">
+    <aside class="sidebar">
+      <div class="sidebar-section">Main</div>
+      <div class="nav-item" onclick="window.location.href='/dashboard'"><span class="nav-icon">🏠</span>Dashboard</div>
+      <div class="nav-item active"><span class="nav-icon">📚</span>Courses</div>
+      <div class="sidebar-section">Account</div>
+      <div class="nav-item" onclick="window.location.href='/profile'"><span class="nav-icon">👤</span>Profile</div>
+      <div class="nav-item" onclick="logout()"><span class="nav-icon">🚪</span>Sign out</div>
+    </aside>
+    <main class="main">
+      <div class="page-header"><h2>Browse courses</h2><p>Explore all available courses and start learning today</p></div>
+      <div class="filters">
+        <input class="search-input" id="search" placeholder="Search courses..." oninput="filterCourses()"/>
+        <button class="filter-pill active" id="filter-all" onclick="setFilter('all',this)">All</button>
+        <button class="filter-pill" id="filter-free" onclick="setFilter('free',this)">Free</button>
+        <button class="filter-pill" id="filter-enrolled" onclick="setFilter('enrolled',this)">Enrolled</button>
+      </div>
+      <div class="courses-grid" id="courses-grid">
+        <div class="skeleton" style="height:260px"></div>
+        <div class="skeleton" style="height:260px"></div>
+        <div class="skeleton" style="height:260px"></div>
+      </div>
+    </main>
+  </div>
+  <script src="/static/app.js"></script>
+  <script>
+    requireAuth();
+    const user=getUser();
+    document.getElementById('nav-name').textContent=user.name;
+    document.getElementById('nav-avatar').textContent=initials(user.name);
+    let allCourses=[],enrolledIds=new Set(),currentFilter='all';
+    async function loadCourses(){
+      try{
+        const [courses,myEnrollments]=await Promise.all([apiGet('/api/courses/'),apiGet('/api/courses/my')]);
+        allCourses=courses;enrolledIds=new Set(myEnrollments.map(e=>e.course_id));
+        renderCourses(allCourses);
+      }catch(err){toast(err.message,'error')}
+    }
+    const emojis={'Python':'🐍','FastAPI':'⚡','AI':'🤖','Machine':'🤖','Web':'🌐'};
+    function getCourseEmoji(title){for(const[k,v]of Object.entries(emojis))if(title.includes(k))return v;return '📖'}
+    function renderCourses(courses){
+      const grid=document.getElementById('courses-grid');
+      if(!courses.length){grid.innerHTML=`<div class="empty-state"><div style="font-size:48px">📚</div><p>No courses found</p></div>`;return}
+      grid.innerHTML=courses.map(c=>{const enrolled=enrolledIds.has(c.id);return`
+        <div class="course-card" onclick="window.location.href='/course/${c.id}'">
+          <div class="course-thumb">${getCourseEmoji(c.title)}<span class="course-price ${c.price===0?'free':''}">${c.price===0?'Free':'₹'+c.price}</span></div>
+          <div class="course-body">
+            <div class="course-tag">Course</div>
+            <div class="course-title">${c.title}</div>
+            <div class="course-desc">${c.description||'No description provided.'}</div>
+            <div class="course-meta">
+              <span>By instructor</span>
+              ${enrolled?'<span class="course-enrolled-badge">✓ Enrolled</span>':'<span style="color:var(--brand);font-weight:500">View course →</span>'}
+            </div>
+          </div>
+        </div>`}).join('');
+    }
+    function setFilter(f,btn){currentFilter=f;document.querySelectorAll('.filter-pill').forEach(b=>b.classList.remove('active'));btn.classList.add('active');filterCourses()}
+    function filterCourses(){
+      const q=document.getElementById('search').value.toLowerCase();
+      let filtered=allCourses.filter(c=>c.title.toLowerCase().includes(q)||(c.description||'').toLowerCase().includes(q));
+      if(currentFilter==='free')filtered=filtered.filter(c=>c.price===0);
+      if(currentFilter==='enrolled')filtered=filtered.filter(c=>enrolledIds.has(c.id));
+      renderCourses(filtered);
+    }
+    function toggleDropdown(){document.getElementById('profile-dropdown').classList.toggle('open')}
+    document.addEventListener('click',e=>{if(!e.target.closest('.profile-menu'))document.getElementById('profile-dropdown').classList.remove('open')});
+    loadCourses();
+  </script>
+</body>
+</html>

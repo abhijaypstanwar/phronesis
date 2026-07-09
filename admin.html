@@ -1,53 +1,53 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Phronesis — Admin</title>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
-  <link rel="stylesheet" href="static/style.css"/>
+  <link rel="stylesheet" href="/static/style.css"/>
   <style>
-    body { background: #f4f4f6; min-height: 100vh; }
-    .layout { display: flex; min-height: calc(100vh - 56px); }
-    .sidebar { width: 220px; background: #fff; border-right: 0.5px solid var(--border); padding: 1.5rem 1rem; flex-shrink: 0; }
-    .sidebar-section { font-size: 10px; font-weight: 600; color: var(--text-muted); letter-spacing: 0.08em; text-transform: uppercase; padding: 0 10px; margin-bottom: 8px; margin-top: 1.5rem; }
-    .sidebar-section:first-child { margin-top: 0; }
-    .nav-item { display: flex; align-items: center; gap: 10px; padding: 9px 10px; border-radius: var(--radius-sm); font-size: 13px; color: var(--text-secondary); cursor: pointer; transition: all 0.15s; margin-bottom: 2px; }
-    .nav-item:hover { background: var(--bg-surface); color: var(--text-primary); }
-    .nav-item.active { background: #eeecff; color: #4a43b8; font-weight: 500; }
-    .nav-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
-    .nav-count { margin-left: auto; font-size: 11px; background: var(--bg-surface); padding: 1px 7px; border-radius: 20px; color: var(--text-muted); }
-    .nav-item.active .nav-count { background: rgba(108,99,255,0.15); color: #4a43b8; }
-    .main { flex: 1; padding: 2rem; overflow-x: auto; }
-    .page-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.5rem; }
-    .page-header h2 { font-size: 1.25rem; color: var(--text-primary); }
-    .page-header p { font-size: 13px; color: var(--text-muted); margin-top: 2px; }
-    .stat-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 12px; margin-bottom: 1.5rem; }
-    .stat-card { background: #fff; border: 0.5px solid var(--border); border-radius: var(--radius-md); padding: 1.25rem; }
-    .stat-card-label { font-size: 12px; color: var(--text-muted); margin-bottom: 6px; }
-    .stat-card-value { font-size: 2rem; font-weight: 700; color: var(--text-primary); line-height: 1; }
-    .stat-card-sub { font-size: 11px; color: var(--text-muted); margin-top: 4px; }
-    .table-wrap { background: #fff; border: 0.5px solid var(--border); border-radius: var(--radius-md); overflow: hidden; }
-    .table-head { display: flex; align-items: center; justify-content: space-between; padding: 1rem 1.25rem; border-bottom: 0.5px solid var(--border); }
-    .table-head h3 { font-size: 14px; }
-    .search-input { height: 34px; border: 0.5px solid var(--border); border-radius: var(--radius-sm); padding: 0 12px; font-size: 13px; width: 220px; color: var(--text-primary); background: var(--bg-surface); outline: none; }
-    table { width: 100%; border-collapse: collapse; }
-    thead th { font-size: 11px; font-weight: 600; color: var(--text-muted); text-align: left; padding: 10px 16px; background: #fafafa; border-bottom: 0.5px solid var(--border); letter-spacing: 0.04em; text-transform: uppercase; }
-    tbody tr { border-bottom: 0.5px solid #f5f5f5; transition: background 0.1s; }
-    tbody tr:last-child { border-bottom: none; }
-    tbody tr:hover { background: #fafafa; }
-    td { padding: 12px 16px; font-size: 13px; color: var(--text-primary); vertical-align: middle; }
-    .td-user { display: flex; align-items: center; gap: 10px; }
-    .td-email { color: var(--text-secondary); font-size: 12px; }
-    .td-actions { display: flex; gap: 6px; }
-    .table-empty { text-align: center; padding: 3rem; color: var(--text-muted); font-size: 13px; }
-    .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 1000; align-items: center; justify-content: center; }
-    .modal-overlay.show { display: flex; }
-    .modal { background: #fff; border-radius: var(--radius-lg); padding: 2rem; max-width: 380px; width: 90%; }
-    .modal h3 { font-size: 16px; margin-bottom: 0.5rem; }
-    .modal p { font-size: 13px; margin-bottom: 1.5rem; }
-    .modal-btns { display: flex; gap: 10px; justify-content: flex-end; }
+    body{background:#f4f4f6;min-height:100vh}
+    .layout{display:flex;min-height:calc(100vh - 56px)}
+    .sidebar{width:220px;background:#fff;border-right:0.5px solid var(--border);padding:1.5rem 1rem;flex-shrink:0}
+    .sidebar-section{font-size:10px;font-weight:600;color:var(--text-muted);letter-spacing:0.08em;text-transform:uppercase;padding:0 10px;margin-bottom:8px;margin-top:1.5rem}
+    .sidebar-section:first-child{margin-top:0}
+    .nav-item{display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:var(--radius-sm);font-size:13px;color:var(--text-secondary);cursor:pointer;transition:all 0.15s;margin-bottom:2px}
+    .nav-item:hover{background:var(--bg-surface);color:var(--text-primary)}
+    .nav-item.active{background:#eeecff;color:#4a43b8;font-weight:500}
+    .nav-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+    .nav-count{margin-left:auto;font-size:11px;background:var(--bg-surface);padding:1px 7px;border-radius:20px;color:var(--text-muted)}
+    .nav-item.active .nav-count{background:rgba(108,99,255,0.15);color:#4a43b8}
+    .main{flex:1;padding:2rem;overflow-x:auto}
+    .page-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem}
+    .page-header h2{font-size:1.25rem;color:var(--text-primary)}
+    .page-header p{font-size:13px;color:var(--text-muted);margin-top:2px}
+    .stat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:1.5rem}
+    .stat-card{background:#fff;border:0.5px solid var(--border);border-radius:var(--radius-md);padding:1.25rem}
+    .stat-card-label{font-size:12px;color:var(--text-muted);margin-bottom:6px}
+    .stat-card-value{font-size:2rem;font-weight:700;color:var(--text-primary);line-height:1}
+    .stat-card-sub{font-size:11px;color:var(--text-muted);margin-top:4px}
+    .table-wrap{background:#fff;border:0.5px solid var(--border);border-radius:var(--radius-md);overflow:hidden}
+    .table-head{display:flex;align-items:center;justify-content:space-between;padding:1rem 1.25rem;border-bottom:0.5px solid var(--border)}
+    .table-head h3{font-size:14px}
+    .search-input{height:34px;border:0.5px solid var(--border);border-radius:var(--radius-sm);padding:0 12px;font-size:13px;width:220px;outline:none;background:var(--bg-surface)}
+    .search-input:focus{border-color:var(--brand)}
+    table{width:100%;border-collapse:collapse}
+    thead th{font-size:11px;font-weight:600;color:var(--text-muted);text-align:left;padding:10px 16px;background:#fafafa;border-bottom:0.5px solid var(--border);letter-spacing:0.04em;text-transform:uppercase}
+    tbody tr{border-bottom:0.5px solid #f5f5f5;transition:background 0.1s}
+    tbody tr:last-child{border-bottom:none}
+    tbody tr:hover{background:#fafafa}
+    td{padding:12px 16px;font-size:13px;vertical-align:middle}
+    .td-user{display:flex;align-items:center;gap:10px}
+    .td-email{color:var(--text-secondary);font-size:12px}
+    .td-actions{display:flex;gap:6px}
+    .table-empty{text-align:center;padding:3rem;color:var(--text-muted);font-size:13px}
+    .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.4);z-index:1000;align-items:center;justify-content:center}
+    .modal-overlay.show{display:flex}
+    .modal{background:#fff;border-radius:var(--radius-lg);padding:2rem;max-width:380px;width:90%}
+    .modal h3{font-size:16px;margin-bottom:0.5rem}
+    .modal p{font-size:13px;margin-bottom:1.5rem}
+    .modal-btns{display:flex;gap:10px;justify-content:flex-end}
   </style>
 </head>
 <body>
@@ -55,9 +55,9 @@
     <div class="navbar-logo">Phro<span style="color:#6c63ff">nesis</span></div>
     <div class="navbar-right">
       <span style="font-size:11px;background:rgba(255,107,107,0.15);color:#ff6b6b;padding:3px 12px;border-radius:20px;border:0.5px solid rgba(255,107,107,0.3)">Admin panel</span>
-      <div class="navbar-user">
+      <div style="display:flex;align-items:center;gap:10px">
         <div class="avatar" id="admin-avatar">A</div>
-        <span id="admin-name">Admin</span>
+        <span style="color:#aaa;font-size:13px" id="admin-name">Admin</span>
         <button class="btn btn-ghost-light btn-sm" onclick="logout()">Sign out</button>
       </div>
     </div>
@@ -65,19 +65,11 @@
   <div class="layout">
     <aside class="sidebar">
       <div class="sidebar-section">Users</div>
-      <div class="nav-item active" id="nav-all" onclick="switchView('all')">
-        <div class="nav-dot" style="background:#6c63ff"></div>All users<span class="nav-count" id="count-all">—</span>
-      </div>
-      <div class="nav-item" id="nav-active" onclick="switchView('active')">
-        <div class="nav-dot" style="background:#2e7d32"></div>Active recently<span class="nav-count" id="count-active">—</span>
-      </div>
-      <div class="nav-item" id="nav-deactivated" onclick="switchView('deactivated')">
-        <div class="nav-dot" style="background:#e24b4a"></div>Deactivated<span class="nav-count" id="count-deactivated">—</span>
-      </div>
+      <div class="nav-item active" id="nav-all" onclick="switchView('all')"><div class="nav-dot" style="background:#6c63ff"></div>All users<span class="nav-count" id="count-all">—</span></div>
+      <div class="nav-item" id="nav-active" onclick="switchView('active')"><div class="nav-dot" style="background:#2e7d32"></div>Active recently<span class="nav-count" id="count-active">—</span></div>
+      <div class="nav-item" id="nav-deactivated" onclick="switchView('deactivated')"><div class="nav-dot" style="background:#e24b4a"></div>Deactivated<span class="nav-count" id="count-deactivated">—</span></div>
       <div class="sidebar-section">System</div>
-      <div class="nav-item" onclick="loadData()">
-        <div class="nav-dot" style="background:#888"></div>Refresh data
-      </div>
+      <div class="nav-item" onclick="loadData()"><div class="nav-dot" style="background:#888"></div>Refresh data</div>
     </aside>
     <main class="main">
       <div class="page-header">
@@ -91,10 +83,8 @@
       </div>
       <div class="table-wrap">
         <div class="table-head"><h3 id="table-title">All users</h3></div>
-        <table>
-          <thead><tr><th>User</th><th>Role</th><th>Status</th><th>Verified</th><th>Joined</th><th>Actions</th></tr></thead>
-          <tbody id="user-table-body"><tr><td colspan="6" class="table-empty">Loading...</td></tr></tbody>
-        </table>
+        <table><thead><tr><th>User</th><th>Role</th><th>Status</th><th>Verified</th><th>Joined</th><th>Actions</th></tr></thead>
+        <tbody id="user-table-body"><tr><td colspan="6" class="table-empty">Loading...</td></tr></tbody></table>
       </div>
     </main>
   </div>
@@ -102,88 +92,57 @@
     <div class="modal">
       <h3 id="modal-title">Are you sure?</h3>
       <p id="modal-msg">This action cannot be undone.</p>
-      <div class="modal-btns">
-        <button class="btn btn-outline" onclick="closeModal()">Cancel</button>
-        <button class="btn btn-danger" id="modal-confirm">Confirm</button>
-      </div>
+      <div class="modal-btns"><button class="btn btn-outline" onclick="closeModal()">Cancel</button><button class="btn btn-danger" id="modal-confirm">Confirm</button></div>
     </div>
   </div>
-  <script src="static/app.js"></script>
+  <script src="/static/app.js"></script>
   <script>
     requireAdmin();
-    let allUsers = [], activeUsers = [], currentView = 'all';
-    const user = getUser();
-    document.getElementById('admin-name').textContent   = user.name;
-    document.getElementById('admin-avatar').textContent = initials(user.name);
-    async function loadData() {
-      try {
-        allUsers    = await apiGet('/api/admin/users');
-        activeUsers = await apiGet('/api/admin/users/active');
-        const deactivated = allUsers.filter(u => !u.is_active);
-        document.getElementById('stat-total').textContent  = allUsers.length;
-        document.getElementById('stat-active').textContent = activeUsers.length;
-        document.getElementById('stat-deact').textContent  = deactivated.length;
-        document.getElementById('count-all').textContent         = allUsers.length;
-        document.getElementById('count-active').textContent      = activeUsers.length;
-        document.getElementById('count-deactivated').textContent = deactivated.length;
+    let allUsers=[],activeUsers=[],currentView='all';
+    const user=getUser();
+    document.getElementById('admin-name').textContent=user.name;
+    document.getElementById('admin-avatar').textContent=initials(user.name);
+    async function loadData(){
+      try{
+        allUsers=await apiGet('/api/admin/users');
+        activeUsers=await apiGet('/api/admin/users/active');
+        const deact=allUsers.filter(u=>!u.is_active);
+        document.getElementById('stat-total').textContent=allUsers.length;
+        document.getElementById('stat-active').textContent=activeUsers.length;
+        document.getElementById('stat-deact').textContent=deact.length;
+        document.getElementById('count-all').textContent=allUsers.length;
+        document.getElementById('count-active').textContent=activeUsers.length;
+        document.getElementById('count-deactivated').textContent=deact.length;
         renderView(currentView);
-      } catch (err) { toast(err.message, 'error'); }
+      }catch(err){toast(err.message,'error')}
     }
-    const views = {
-      all:         { title: 'All users',         sub: 'Manage all registered accounts',      data: () => allUsers },
-      active:      { title: 'Active recently',   sub: 'Users who logged in within 24 hours', data: () => activeUsers },
-      deactivated: { title: 'Deactivated users', sub: 'Suspended accounts',                  data: () => allUsers.filter(u => !u.is_active) },
+    const views={
+      all:{title:'All users',sub:'Manage all registered accounts',data:()=>allUsers},
+      active:{title:'Active recently',sub:'Users who logged in within 24 hours',data:()=>activeUsers},
+      deactivated:{title:'Deactivated users',sub:'Suspended accounts',data:()=>allUsers.filter(u=>!u.is_active)},
     };
-    function switchView(view) {
-      currentView = view;
-      document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
-      document.getElementById('nav-' + view).classList.add('active');
-      renderView(view);
+    function switchView(view){currentView=view;document.querySelectorAll('.nav-item').forEach(el=>el.classList.remove('active'));document.getElementById('nav-'+view).classList.add('active');renderView(view)}
+    function renderView(view){const v=views[view];document.getElementById('view-title').textContent=v.title;document.getElementById('view-sub').textContent=v.sub;document.getElementById('table-title').textContent=v.title;renderTable(v.data())}
+    function renderTable(users){
+      const tbody=document.getElementById('user-table-body');
+      if(!users.length){tbody.innerHTML='<tr><td colspan="6" class="table-empty">No users found</td></tr>';return}
+      tbody.innerHTML=users.map(u=>`<tr id="row-${u.id}">
+        <td><div class="td-user"><div class="avatar" style="width:32px;height:32px;font-size:11px">${initials(u.name)}</div><div><div>${u.name}</div><div class="td-email">${u.email}</div></div></div></td>
+        <td><span class="pill ${u.role==='admin'?'pill-purple':'pill-gray'}">${u.role}</span></td>
+        <td><span class="pill ${u.is_active?'pill-green':'pill-red'}">${u.is_active?'active':'inactive'}</span></td>
+        <td><span class="pill ${u.is_verified?'pill-green':'pill-red'}">${u.is_verified?'✓ verified':'✗ unverified'}</span></td>
+        <td>${new Date(u.created_at).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'})}</td>
+        <td><div class="td-actions">${u.role!=='admin'?`<button class="btn btn-outline btn-sm" onclick="confirmDeactivate('${u.id}','${u.name}',${u.is_active})">${u.is_active?'Deactivate':'Reactivate'}</button><button class="btn btn-danger btn-sm" onclick="confirmDelete('${u.id}','${u.name}')">Delete</button>`:'<span style="font-size:12px;color:#bbb">—</span>'}</div></td>
+      </tr>`).join('');
     }
-    function renderView(view) {
-      const v = views[view];
-      document.getElementById('view-title').textContent  = v.title;
-      document.getElementById('view-sub').textContent    = v.sub;
-      document.getElementById('table-title').textContent = v.title;
-      renderTable(v.data());
-    }
-    function renderTable(users) {
-      const tbody = document.getElementById('user-table-body');
-      if (!users.length) { tbody.innerHTML = '<tr><td colspan="6" class="table-empty">No users found</td></tr>'; return; }
-      tbody.innerHTML = users.map(u => `
-        <tr id="row-${u.id}">
-          <td><div class="td-user"><div class="avatar" style="width:32px;height:32px;font-size:11px;">${initials(u.name)}</div><div><div>${u.name}</div><div class="td-email">${u.email}</div></div></div></td>
-          <td><span class="pill ${u.role === 'admin' ? 'pill-purple' : 'pill-gray'}">${u.role}</span></td>
-          <td><span class="pill ${u.is_active ? 'pill-green' : 'pill-red'}">${u.is_active ? 'active' : 'inactive'}</span></td>
-          <td><span class="pill ${u.is_verified ? 'pill-green' : 'pill-red'}">${u.is_verified ? '✓ verified' : '✗ unverified'}</span></td>
-          <td>${new Date(u.created_at).toLocaleDateString('en-GB', {day:'numeric',month:'short',year:'numeric'})}</td>
-          <td><div class="td-actions">${u.role !== 'admin' ? `
-            <button class="btn btn-outline btn-sm" onclick="confirmDeactivate('${u.id}','${u.name}',${u.is_active})">${u.is_active ? 'Deactivate' : 'Reactivate'}</button>
-            <button class="btn btn-danger btn-sm" onclick="confirmDelete('${u.id}','${u.name}')">Delete</button>
-          ` : '<span style="font-size:12px;color:#bbb">—</span>'}</div></td>
-        </tr>`).join('');
-    }
-    function filterTable(query) {
-      const q = query.toLowerCase();
-      const data = views[currentView].data().filter(u => u.name.toLowerCase().includes(q) || u.email.toLowerCase().includes(q));
-      renderTable(data);
-    }
-    let pendingAction = null;
-    function openModal(title, msg, action) {
-      document.getElementById('modal-title').textContent = title;
-      document.getElementById('modal-msg').textContent   = msg;
-      document.getElementById('modal-confirm').onclick   = action;
-      document.getElementById('modal').classList.add('show');
-    }
-    function closeModal() { document.getElementById('modal').classList.remove('show'); }
-    function confirmDeactivate(id, name, isActive) {
-      if (isActive) { openModal('Deactivate ' + name + '?', 'This user will no longer be able to log in.', () => deactivateUser(id)); }
-      else { reactivateUser(id); }
-    }
-    function confirmDelete(id, name) { openModal('Delete ' + name + '?', 'This permanently removes the account and all data.', () => deleteUser(id)); }
-    async function deactivateUser(id) { closeModal(); try { await apiPatch('/api/admin/users/' + id + '/deactivate'); toast('User deactivated'); await loadData(); } catch (err) { toast(err.message, 'error'); } }
-    async function reactivateUser(id) { try { await apiPatch('/api/admin/users/' + id + '/reactivate'); toast('User reactivated'); await loadData(); } catch (err) { toast(err.message, 'error'); } }
-    async function deleteUser(id) { closeModal(); try { await apiDelete('/api/admin/users/' + id); toast('User deleted'); await loadData(); } catch (err) { toast(err.message, 'error'); } }
+    function filterTable(q){const lq=q.toLowerCase();renderTable(views[currentView].data().filter(u=>u.name.toLowerCase().includes(lq)||u.email.toLowerCase().includes(lq)))}
+    function openModal(title,msg,action){document.getElementById('modal-title').textContent=title;document.getElementById('modal-msg').textContent=msg;document.getElementById('modal-confirm').onclick=action;document.getElementById('modal').classList.add('show')}
+    function closeModal(){document.getElementById('modal').classList.remove('show')}
+    function confirmDeactivate(id,name,isActive){if(isActive)openModal('Deactivate '+name+'?','This user will no longer be able to log in.',()=>deactivateUser(id));else reactivateUser(id)}
+    function confirmDelete(id,name){openModal('Delete '+name+'?','This permanently removes the account.',()=>deleteUser(id))}
+    async function deactivateUser(id){closeModal();try{await apiPatch('/api/admin/users/'+id+'/deactivate');toast('User deactivated');await loadData()}catch(err){toast(err.message,'error')}}
+    async function reactivateUser(id){try{await apiPatch('/api/admin/users/'+id+'/reactivate');toast('User reactivated');await loadData()}catch(err){toast(err.message,'error')}}
+    async function deleteUser(id){closeModal();try{await apiDelete('/api/admin/users/'+id);toast('User deleted');await loadData()}catch(err){toast(err.message,'error')}}
     loadData();
   </script>
 </body>

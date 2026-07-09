@@ -1,111 +1,89 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Phronesis — Forgot Password</title>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
-  <link rel="stylesheet" href="static/style.css"/>
+  <link rel="stylesheet" href="/static/style.css"/>
   <style>
-    body { background: #0a0a0a; min-height: 100vh; display: flex; align-items: center; justify-content: center; }
-    .wrap { width: 100%; max-width: 420px; margin: 2rem; animation: fadeUp 0.5s ease forwards; }
-    .logo { text-align: center; margin-bottom: 2rem; }
-    .logo-text { font-size: 22px; font-weight: 700; color: #fff; letter-spacing: -0.02em; }
-    .logo-text span { color: #6c63ff; }
-    .logo-sub { font-size: 11px; color: #444; margin-top: 4px; }
-    .card { background: #fff; border-radius: 16px; padding: 2.5rem 2rem; border: 0.5px solid #1e1e1e; }
-    .step { display: none; }
-    .step.active { display: block; }
-    .step-title { font-size: 1.3rem; font-weight: 700; color: #111; margin-bottom: 0.3rem; }
-    .step-sub { font-size: 13px; color: #888; margin-bottom: 1.75rem; line-height: 1.6; }
-    .success-icon { text-align: center; font-size: 48px; margin-bottom: 1rem; }
-    .email-highlight { color: #6c63ff; font-weight: 600; }
-    .info-box { background: #f4f3ff; border: 0.5px solid #d4d0ff; border-radius: 10px; padding: 14px 16px; margin-bottom: 1.5rem; }
-    .info-box p { font-size: 12px; color: #4a43b8; line-height: 1.7; margin: 0; }
-    .divider-text { text-align: center; font-size: 12px; color: #ccc; margin: 1rem 0; position: relative; }
-    .divider-text::before, .divider-text::after { content: ''; position: absolute; top: 50%; width: 38%; height: 0.5px; background: #eee; }
-    .divider-text::before { left: 0; }
-    .divider-text::after { right: 0; }
-    .back { display: block; text-align: center; margin-top: 1.25rem; font-size: 12px; color: #888; }
-    .back a { color: #6c63ff; font-weight: 500; cursor: pointer; }
-    .error-msg { background: #ffebee; color: #c62828; font-size: 12px; padding: 10px 14px; border-radius: 8px; margin-bottom: 1rem; display: none; }
-    .error-msg.show { display: block; }
-    .steps-indicator { display: flex; align-items: center; justify-content: center; gap: 6px; margin-bottom: 1.75rem; }
-    .step-dot { width: 8px; height: 8px; border-radius: 50%; background: #eee; transition: background 0.3s; }
-    .step-dot.active { background: #6c63ff; }
-    .step-line { width: 32px; height: 1px; background: #eee; }
+    body{background:#0a0a14;min-height:100vh;display:flex;align-items:center;justify-content:center}
+    .wrap{width:100%;max-width:420px;margin:2rem;animation:fadeUp 0.5s ease forwards}
+    .logo{text-align:center;margin-bottom:2rem}
+    .logo-text{font-size:22px;font-weight:700;color:#fff}.logo-text span{color:#6c63ff}
+    .logo-sub{font-size:11px;color:#444;margin-top:4px}
+    .card{background:#fff;border-radius:16px;padding:2.5rem 2rem;border:0.5px solid #1e1e2e}
+    .step{display:none}.step.active{display:block}
+    .step-title{font-size:1.3rem;font-weight:700;color:#111;margin-bottom:0.3rem}
+    .step-sub{font-size:13px;color:#888;margin-bottom:1.75rem;line-height:1.6}
+    .error-msg{background:#ffebee;color:#c62828;font-size:12px;padding:10px 14px;border-radius:8px;margin-bottom:1rem;display:none}
+    .error-msg.show{display:block}
+    .info-box{background:#f4f3ff;border:0.5px solid #d4d0ff;border-radius:10px;padding:14px 16px;margin-bottom:1.5rem}
+    .info-box p{font-size:12px;color:#4a43b8;line-height:1.7;margin:0}
+    .divider-text{text-align:center;font-size:12px;color:#ccc;margin:1rem 0}
+    .back{display:block;text-align:center;margin-top:1.25rem;font-size:12px;color:#888}
+    .back a{color:#6c63ff;font-weight:500;cursor:pointer}
+    .email-highlight{color:#6c63ff;font-weight:600}
+    .steps-indicator{display:flex;align-items:center;justify-content:center;gap:6px;margin-bottom:1.75rem}
+    .step-dot{width:8px;height:8px;border-radius:50%;background:#eee;transition:background 0.3s}
+    .step-dot.active{background:#6c63ff}
+    .step-line{width:32px;height:1px;background:#eee}
   </style>
 </head>
 <body>
   <div class="wrap">
-    <div class="logo">
-      <div class="logo-text">Phro<span>nesis</span></div>
-      <div class="logo-sub">φρόνησις — Practical Wisdom</div>
-    </div>
+    <div class="logo"><div class="logo-text">Phro<span>nesis</span></div><div class="logo-sub">φρόνησις — Practical Wisdom</div></div>
     <div class="card">
       <div class="steps-indicator">
-        <div class="step-dot active" id="dot-1"></div>
-        <div class="step-line"></div>
-        <div class="step-dot" id="dot-2"></div>
-        <div class="step-line"></div>
+        <div class="step-dot active" id="dot-1"></div><div class="step-line"></div>
+        <div class="step-dot" id="dot-2"></div><div class="step-line"></div>
         <div class="step-dot" id="dot-3"></div>
       </div>
       <div class="step active" id="step-email">
         <div class="step-title">Forgot your password?</div>
-        <div class="step-sub">No worries. Enter your email and we'll send you a reset link instantly.</div>
+        <div class="step-sub">Enter your email and we'll send you a reset link instantly.</div>
         <div class="error-msg" id="email-error"></div>
-        <div class="field"><label>Email address</label><input type="email" id="email-input" placeholder="you@example.com" onkeydown="if(event.key==='Enter') handleSendLink()"/></div>
+        <div class="field"><label>Email address</label><input type="email" id="email-input" placeholder="you@example.com" onkeydown="if(event.key==='Enter')handleSendLink()"/></div>
         <button class="btn btn-primary btn-full" id="email-btn" onclick="handleSendLink()">Send reset link</button>
         <div class="back"><a onclick="window.location.href='/login'">← Back to sign in</a></div>
       </div>
       <div class="step" id="step-check">
-        <div class="success-icon">📧</div>
-        <div class="step-title" style="text-align:center;">Check your email</div>
-        <div class="step-sub" style="text-align:center;">We sent a password reset link to<br/><span class="email-highlight" id="sent-to-email"></span></div>
+        <div style="text-align:center;font-size:48px;margin-bottom:1rem">📧</div>
+        <div class="step-title" style="text-align:center">Check your email</div>
+        <div class="step-sub" style="text-align:center">We sent a password reset link to<br/><span class="email-highlight" id="sent-to-email"></span></div>
         <div class="info-box"><p>📎 Click the link in the email to reset your password.<br/>⏱ The link expires in <strong>15 minutes</strong>.<br/>📁 Check your spam folder if you don't see it.</p></div>
         <div class="divider-text">didn't get it?</div>
         <button class="btn btn-outline btn-full" id="resend-btn" onclick="handleResend()">Resend reset link</button>
         <div class="back"><a onclick="window.location.href='/login'">← Back to sign in</a></div>
       </div>
       <div class="step" id="step-resent">
-        <div class="success-icon">✅</div>
-        <div class="step-title" style="text-align:center;">Link resent!</div>
-        <div class="step-sub" style="text-align:center;">A new reset link has been sent to<br/><span class="email-highlight" id="resent-to-email"></span><br/>Check your inbox and spam folder.</div>
-        <button class="btn btn-outline btn-full" onclick="showStep('step-check'); setDots(2);">← Back</button>
+        <div style="text-align:center;font-size:48px;margin-bottom:1rem">✅</div>
+        <div class="step-title" style="text-align:center">Link resent!</div>
+        <div class="step-sub" style="text-align:center">A new reset link has been sent to<br/><span class="email-highlight" id="resent-to-email"></span></div>
+        <button class="btn btn-outline btn-full" onclick="showStep('step-check');setDots(2)">← Back</button>
         <div class="back"><a onclick="window.location.href='/login'">← Back to sign in</a></div>
       </div>
     </div>
   </div>
-  <script src="static/app.js"></script>
+  <script src="/static/app.js"></script>
   <script>
-    let userEmail = '';
-    async function handleSendLink() {
-      const email = document.getElementById('email-input').value.trim();
-      const btn = document.getElementById('email-btn');
-      const err = document.getElementById('email-error');
-      err.classList.remove('show');
-      if (!email) { err.textContent = 'Please enter your email address'; return err.classList.add('show'); }
-      setLoading(btn, true);
-      try {
-        await apiPost('/api/auth/forgot-password', { email });
-        userEmail = email;
-        document.getElementById('sent-to-email').textContent = email;
-        showStep('step-check'); setDots(2);
-      } catch (e) { err.textContent = e.message; err.classList.add('show'); setLoading(btn, false); }
+    let userEmail='';
+    async function handleSendLink(){
+      const email=document.getElementById('email-input').value.trim();
+      const btn=document.getElementById('email-btn');const err=document.getElementById('email-error');err.classList.remove('show');
+      if(!email){err.textContent='Please enter your email';return err.classList.add('show')}
+      setLoading(btn,true);
+      try{await apiPost('/api/auth/forgot-password',{email});userEmail=email;document.getElementById('sent-to-email').textContent=email;showStep('step-check');setDots(2)}
+      catch(e){err.textContent=e.message;err.classList.add('show');setLoading(btn,false)}
     }
-    async function handleResend() {
-      const btn = document.getElementById('resend-btn');
-      setLoading(btn, true);
-      try {
-        await apiPost('/api/auth/forgot-password', { email: userEmail });
-        document.getElementById('resent-to-email').textContent = userEmail;
-        showStep('step-resent'); setDots(3);
-      } catch (e) { toast(e.message, 'error'); }
-      setLoading(btn, false);
+    async function handleResend(){
+      const btn=document.getElementById('resend-btn');setLoading(btn,true);
+      try{await apiPost('/api/auth/forgot-password',{email:userEmail});document.getElementById('resent-to-email').textContent=userEmail;showStep('step-resent');setDots(3)}
+      catch(e){toast(e.message,'error')}
+      setLoading(btn,false);
     }
-    function showStep(id) { document.querySelectorAll('.step').forEach(s => s.classList.remove('active')); document.getElementById(id).classList.add('active'); }
-    function setDots(active) { [1,2,3].forEach(i => document.getElementById('dot-' + i).classList.toggle('active', i <= active)); }
+    function showStep(id){document.querySelectorAll('.step').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active')}
+    function setDots(active){[1,2,3].forEach(i=>document.getElementById('dot-'+i).classList.toggle('active',i<=active))}
   </script>
 </body>
 </html>

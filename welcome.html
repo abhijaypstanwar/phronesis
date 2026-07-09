@@ -3,82 +3,263 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Phronesis — Learn smarter</title>
+  <title>Phronesis — Practical Wisdom</title>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
-  <link rel="stylesheet" href="static/style.css"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
   <style>
-    body { background: #0a0a0a; overflow: hidden; height: 100vh; }
-    .lines-canvas { position: fixed; inset: 0; z-index: 0; }
-    .hero { position: relative; z-index: 10; height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 2rem; }
-    .badge { display: inline-flex; align-items: center; gap: 6px; background: rgba(108,99,255,0.15); border: 0.5px solid rgba(108,99,255,0.35); color: #a89cff; font-size: 11px; font-weight: 500; padding: 5px 14px; border-radius: 100px; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 2rem; opacity: 0; animation: fadeUp 0.8s 0.2s forwards; }
-    .badge-dot { width: 6px; height: 6px; border-radius: 50%; background: #6c63ff; animation: pulse 2s infinite; }
-    .hero h1 { font-size: clamp(2.5rem, 6vw, 4.5rem); font-weight: 700; color: #fff; line-height: 1.1; letter-spacing: -0.03em; margin-bottom: 1.5rem; opacity: 0; animation: fadeUp 0.8s 0.4s forwards; }
-    .hero h1 span { color: #6c63ff; }
-    .hero p { font-size: 1rem; color: #888; max-width: 480px; line-height: 1.8; margin-bottom: 2.5rem; opacity: 0; animation: fadeUp 0.8s 0.6s forwards; }
-    .hero-btns { display: flex; gap: 12px; opacity: 0; animation: fadeUp 0.8s 0.8s forwards; }
-    .stats-row { position: absolute; bottom: 2.5rem; display: flex; gap: 3rem; opacity: 0; animation: fadeUp 0.8s 1s forwards; }
-    .stat-item { text-align: center; }
-    .stat-item strong { display: block; font-size: 1.5rem; font-weight: 700; color: #fff; }
-    .stat-item span { font-size: 12px; color: #555; }
-    .divider { width: 1px; background: #222; align-self: stretch; }
-    @keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-    @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{
+      --brand:#6c63ff;
+      --brand-soft:#8a82ff;
+      --ink:#0c0c14;
+      --paper:#fafafa;
+      --text:#1a1a24;
+      --text-soft:#6b6b7d;
+      --line:#e4e4ea;
+      --font:'Inter',sans-serif;
+      --mono:'JetBrains Mono',monospace;
+    }
+    html,body{height:100%;overflow:hidden}
+    body{font-family:var(--font);background:var(--paper);color:var(--text)}
+
+    /* faint grid — barely there */
+    .grid-bg{
+      position:fixed;inset:0;
+      background-image:linear-gradient(rgba(108,99,255,0.035) 1px,transparent 1px),linear-gradient(90deg,rgba(108,99,255,0.035) 1px,transparent 1px);
+      background-size:64px 64px;pointer-events:none;z-index:0;
+      -webkit-mask-image:radial-gradient(ellipse 80% 60% at 50% 45%, black 30%, transparent 75%);
+      mask-image:radial-gradient(ellipse 80% 60% at 50% 45%, black 30%, transparent 75%);
+    }
+
+    #bg-canvas{position:fixed;inset:0;z-index:1;pointer-events:none;opacity:0.55}
+
+    /* ── nav ── */
+    nav{
+      position:fixed;top:0;left:0;right:0;z-index:100;
+      padding:1.5rem 3rem;display:flex;align-items:center;justify-content:space-between;
+    }
+    .nav-logo{
+      font-size:1.05rem;font-weight:700;color:var(--text);letter-spacing:-0.01em;
+      display:flex;align-items:center;gap:8px;
+    }
+    .nav-logo .dot{width:6px;height:6px;border-radius:50%;background:var(--brand)}
+    .nav-logo span{color:var(--brand)}
+    .nav-links{display:flex;align-items:center;gap:2.25rem}
+    .nav-links a{
+      font-size:0.85rem;font-weight:500;color:var(--text-soft);
+      text-decoration:none;cursor:pointer;transition:color 0.2s;
+    }
+    .nav-links a:hover{color:var(--text)}
+    .nav-cta{
+      padding:0.55rem 1.4rem;font-size:0.82rem;font-weight:600;
+      background:var(--ink);color:#fff;border:none;border-radius:8px;cursor:pointer;
+      font-family:var(--font);transition:all 0.2s;
+    }
+    .nav-cta:hover{background:var(--brand);transform:translateY(-1px);box-shadow:0 4px 16px rgba(108,99,255,0.3)}
+
+    /* ── hero ── */
+    .hero{
+      position:fixed;inset:0;z-index:10;
+      display:flex;flex-direction:column;align-items:center;justify-content:center;
+      text-align:center;padding:2rem;
+    }
+
+    .eyebrow{
+      display:inline-flex;align-items:center;gap:8px;
+      font-family:var(--mono);font-size:0.72rem;font-weight:500;
+      color:var(--brand);letter-spacing:0.04em;
+      padding:0.45rem 1rem;border-radius:100px;
+      background:rgba(108,99,255,0.07);border:1px solid rgba(108,99,255,0.18);
+      margin-bottom:2rem;
+      opacity:0;animation:fadeUp 0.7s 0.1s forwards;
+    }
+    .eyebrow .pulse{
+      width:6px;height:6px;border-radius:50%;background:var(--brand);
+      animation:pulse 2s infinite;
+    }
+    @keyframes pulse{0%,100%{opacity:1}50%{opacity:0.3}}
+
+    .hero-title{
+      font-size:clamp(2.75rem,7vw,5.5rem);
+      font-weight:800;letter-spacing:-0.035em;line-height:1.02;
+      color:var(--ink);margin-bottom:1.25rem;
+      opacity:0;animation:fadeUp 0.7s 0.22s forwards;
+    }
+    .hero-title .accent{
+      color:var(--brand);
+      position:relative;
+    }
+    .hero-title .accent::after{
+      content:'';position:absolute;left:2px;right:2px;bottom:0.08em;height:0.13em;
+      background:rgba(108,99,255,0.16);z-index:-1;border-radius:2px;
+    }
+
+    .greek-line{
+      font-family:var(--mono);font-size:0.95rem;font-weight:500;
+      color:var(--text-soft);letter-spacing:0.06em;margin-bottom:2.5rem;
+      opacity:0;animation:fadeUp 0.7s 0.34s forwards;
+      display:flex;align-items:center;gap:10px;
+    }
+    .greek-line .sep{width:24px;height:1px;background:var(--line)}
+
+    .hero-desc{
+      font-size:1.05rem;line-height:1.7;color:var(--text-soft);
+      max-width:480px;margin-bottom:2.75rem;font-weight:400;
+      opacity:0;animation:fadeUp 0.7s 0.46s forwards;
+    }
+
+    .hero-btns{
+      display:flex;gap:0.875rem;align-items:center;
+      opacity:0;animation:fadeUp 0.7s 0.58s forwards;
+    }
+
+    .btn-primary{
+      position:relative;padding:0.875rem 2rem;font-size:0.92rem;font-weight:600;
+      background:var(--ink);color:#fff;border:none;border-radius:10px;cursor:pointer;
+      font-family:var(--font);transition:all 0.25s cubic-bezier(0.2,0.8,0.2,1);
+      display:inline-flex;align-items:center;gap:8px;overflow:hidden;
+    }
+    .btn-primary::before{
+      content:'';position:absolute;inset:0;
+      background:linear-gradient(135deg,var(--brand),var(--brand-soft));
+      opacity:0;transition:opacity 0.25s;
+    }
+    .btn-primary span{position:relative;z-index:1;display:flex;align-items:center;gap:8px}
+    .btn-primary:hover::before{opacity:1}
+    .btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(108,99,255,0.35)}
+    .btn-primary .arrow{transition:transform 0.25s}
+    .btn-primary:hover .arrow{transform:translateX(3px)}
+
+    .btn-secondary{
+      padding:0.875rem 1.75rem;font-size:0.92rem;font-weight:600;
+      background:transparent;color:var(--text);
+      border:1.5px solid var(--line);border-radius:10px;cursor:pointer;
+      font-family:var(--font);transition:all 0.2s;
+    }
+    .btn-secondary:hover{border-color:var(--brand);color:var(--brand);background:rgba(108,99,255,0.04)}
+
+    /* ── bottom strip ── */
+    .bottom-strip{
+      position:fixed;bottom:0;left:0;right:0;z-index:50;
+      border-top:1px solid var(--line);
+      background:rgba(250,250,250,0.85);backdrop-filter:blur(12px);
+      padding:1rem 3rem;
+      display:flex;align-items:center;justify-content:space-between;
+    }
+    .strip-left{display:flex;align-items:center;gap:2rem}
+    .strip-item{
+      display:flex;align-items:center;gap:7px;
+      font-size:0.78rem;color:var(--text-soft);font-weight:500;
+    }
+    .strip-dot{width:6px;height:6px;border-radius:50%;background:#22c55e}
+    .strip-item.mono{font-family:var(--mono);font-size:0.74rem;color:#a0a0b0}
+    .strip-copy{font-size:0.78rem;color:var(--text-soft);font-weight:500}
+
+    @keyframes fadeUp{
+      from{opacity:0;transform:translateY(18px)}
+      to{opacity:1;transform:translateY(0)}
+    }
   </style>
 </head>
 <body>
-  <canvas class="lines-canvas" id="canvas"></canvas>
-  <div class="hero">
-    <div class="badge"><div class="badge-dot"></div>AI-powered learning platform</div>
-    <h1>Learn smarter,<br/>not <span>harder</span></h1>
-    <p>An intelligent platform that adapts to you. Deep course chatbot, personalised study plans, and instant quiz generation — all in one place.</p>
-    <div class="hero-btns">
-      <button class="btn btn-primary" onclick="window.location.href='/login'">Get started free</button>
-      <button class="btn btn-ghost-light" onclick="window.location.href='/login'">Sign in</button>
-    </div>
-    <div class="stats-row">
-      <div class="stat-item"><strong>10k+</strong><span>Students</span></div>
-      <div class="divider"></div>
-      <div class="stat-item"><strong>200+</strong><span>Courses</span></div>
-      <div class="divider"></div>
-      <div class="stat-item"><strong>98%</strong><span>Satisfaction</span></div>
-    </div>
+
+<div class="grid-bg"></div>
+<canvas id="bg-canvas"></canvas>
+
+<nav>
+  <div class="nav-logo"><span class="dot"></span>Phro<span>nesis</span></div>
+  <div class="nav-links">
+    <a onclick="window.location.href='/courses'">Courses</a>
+    <a onclick="window.location.href='/login'">Sign in</a>
+    <button class="nav-cta" onclick="window.location.href='/login'">Get started</button>
   </div>
-  <script>
-    const canvas = document.getElementById('canvas');
-    const ctx = canvas.getContext('2d');
-    function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
-    resize();
-    window.addEventListener('resize', resize);
-    const LINES = 6;
-    const lines = Array.from({ length: LINES }, (_, i) => ({
-      x: Math.random() * canvas.width, y: Math.random() * canvas.height,
-      angle: Math.random() * Math.PI * 2, speed: 0.003 + Math.random() * 0.004,
-      length: 300 + Math.random() * 400, width: 0.5 + Math.random() * 1,
-      hue: i % 2 === 0 ? 255 : 170, alpha: 0.04 + Math.random() * 0.06,
-      wave: Math.random() * Math.PI * 2, waveSpeed: 0.005 + Math.random() * 0.008,
-    }));
-    function draw() {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      lines.forEach(l => {
-        l.wave += l.waveSpeed; l.angle += Math.sin(l.wave) * 0.004;
-        l.x += Math.cos(l.angle) * 0.4; l.y += Math.sin(l.angle) * 0.4;
-        if (l.x < -l.length) l.x = canvas.width + l.length;
-        if (l.x > canvas.width + l.length) l.x = -l.length;
-        if (l.y < -l.length) l.y = canvas.height + l.length;
-        if (l.y > canvas.height + l.length) l.y = -l.length;
-        const x2 = l.x + Math.cos(l.angle) * l.length;
-        const y2 = l.y + Math.sin(l.angle) * l.length;
-        const grad = ctx.createLinearGradient(l.x, l.y, x2, y2);
-        grad.addColorStop(0, `hsla(${l.hue}, 80%, 65%, 0)`);
-        grad.addColorStop(0.5, `hsla(${l.hue}, 80%, 65%, ${l.alpha})`);
-        grad.addColorStop(1, `hsla(${l.hue}, 80%, 65%, 0)`);
-        ctx.beginPath(); ctx.moveTo(l.x, l.y); ctx.lineTo(x2, y2);
-        ctx.strokeStyle = grad; ctx.lineWidth = l.width; ctx.stroke();
-      });
-      requestAnimationFrame(draw);
+</nav>
+
+<section class="hero">
+  <div class="eyebrow">
+    <span class="pulse"></span>
+    AI-powered learning platform
+  </div>
+
+  <h1 class="hero-title">
+    Learn with <span class="accent">Phronesis</span>
+  </h1>
+
+  <div class="greek-line">
+    <span class="sep"></span>
+    φρόνησις — practical wisdom
+    <span class="sep"></span>
+  </div>
+
+  <p class="hero-desc">
+    A learning platform that adapts to you — a course-aware AI chatbot,
+    personalised study plans, and instant quiz generation.
+  </p>
+
+  <div class="hero-btns">
+    <button class="btn-primary" onclick="window.location.href='/login'">
+      <span>Start learning <span class="arrow">→</span></span>
+    </button>
+    <button class="btn-secondary" onclick="window.location.href='/courses'">
+      Browse courses
+    </button>
+  </div>
+</section>
+
+<div class="bottom-strip">
+  <div class="strip-left">
+    <div class="strip-item"><span class="strip-dot"></span>All systems operational</div>
+    <div class="strip-item mono">FastAPI · SQLAlchemy · JWT</div>
+  </div>
+  <div class="strip-copy">© 2026 Phronesis</div>
+</div>
+
+<script>
+  const canvas = document.getElementById('bg-canvas');
+  const ctx    = canvas.getContext('2d');
+  function resize(){canvas.width=window.innerWidth;canvas.height=window.innerHeight}
+  resize();
+  window.addEventListener('resize', resize);
+
+  const particles = Array.from({length:36},()=>({
+    x:Math.random()*window.innerWidth,
+    y:Math.random()*window.innerHeight,
+    vx:(Math.random()-0.5)*0.18,
+    vy:(Math.random()-0.5)*0.18,
+    size:Math.random()*1.2+0.6,
+  }));
+
+  let mouse={x:-999,y:-999};
+  document.addEventListener('mousemove',e=>{mouse.x=e.clientX;mouse.y=e.clientY});
+
+  function drawFrame(){
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+
+    particles.forEach(p=>{
+      p.x+=p.vx;p.y+=p.vy;
+      if(p.x<0||p.x>canvas.width)p.vx*=-1;
+      if(p.y<0||p.y>canvas.height)p.vy*=-1;
+      const dx=p.x-mouse.x,dy=p.y-mouse.y,d=Math.sqrt(dx*dx+dy*dy);
+      if(d<110){p.x+=dx/d*0.5;p.y+=dy/d*0.5}
+      ctx.beginPath();ctx.arc(p.x,p.y,p.size,0,Math.PI*2);
+      ctx.fillStyle='rgba(108,99,255,0.28)';ctx.fill();
+    });
+
+    for(let i=0;i<particles.length;i++){
+      for(let j=i+1;j<particles.length;j++){
+        const dx=particles[i].x-particles[j].x,dy=particles[i].y-particles[j].y;
+        const d=Math.sqrt(dx*dx+dy*dy);
+        if(d<130){
+          ctx.beginPath();ctx.moveTo(particles[i].x,particles[i].y);
+          ctx.lineTo(particles[j].x,particles[j].y);
+          ctx.strokeStyle=`rgba(108,99,255,${0.07*(1-d/130)})`;
+          ctx.lineWidth=0.6;ctx.stroke();
+        }
+      }
     }
-    draw();
-  </script>
+    requestAnimationFrame(drawFrame);
+  }
+  drawFrame();
+</script>
 </body>
 </html>

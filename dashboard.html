@@ -36,6 +36,14 @@
     .section-header h3 { font-size: 15px; font-weight: 600; color: var(--text-primary); }
     .section-header a { font-size: 12px; color: var(--brand); cursor: pointer; font-weight: 500; }
     .courses-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 12px; margin-bottom: 1.5rem; }
+    .course-card { background: #fff; border: 0.5px solid var(--border); border-radius: var(--radius-md); padding: 1.25rem; cursor: pointer; transition: box-shadow 0.15s, transform 0.1s; }
+    .course-card:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.08); transform: translateY(-2px); }
+    .course-tag { font-size: 10px; font-weight: 600; padding: 3px 8px; border-radius: 20px; display: inline-block; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 0.04em; background: #eeecff; color: #4a43b8; }
+    .course-title { font-size: 13px; font-weight: 600; color: var(--text-primary); margin-bottom: 6px; line-height: 1.4; }
+    .course-desc { font-size: 11px; color: var(--text-muted); margin-bottom: 12px; line-height: 1.5; }
+    .course-progress-bar { height: 4px; background: #eee; border-radius: 2px; overflow: hidden; margin-bottom: 4px; }
+    .course-progress-fill { height: 100%; background: var(--brand); border-radius: 2px; transition: width 0.6s ease; }
+    .course-progress-text { font-size: 11px; color: var(--text-muted); }
     .empty-courses { grid-column: 1/-1; text-align: center; padding: 3rem; background: #fff; border: 0.5px dashed var(--border); border-radius: var(--radius-md); }
     .empty-courses p { font-size: 13px; color: var(--text-muted); margin-bottom: 1rem; }
     .bottom-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
@@ -86,6 +94,7 @@
         </div>
         <div class="profile-dropdown" id="profile-dropdown">
           <div class="dropdown-item" onclick="window.location.href='/profile'">👤 My profile</div>
+          <div class="dropdown-item" onclick="window.location.href='/courses'">📚 Browse courses</div>
           <div class="dropdown-item">⚙️ Settings</div>
           <div class="dropdown-divider"></div>
           <div class="dropdown-item danger" onclick="logout()">Sign out</div>
@@ -93,11 +102,12 @@
       </div>
     </div>
   </nav>
+
   <div class="layout">
     <aside class="sidebar">
       <div class="sidebar-section">Main</div>
       <div class="nav-item active"><span class="nav-icon">🏠</span>Dashboard</div>
-      <div class="nav-item"><span class="nav-icon">📚</span>My courses</div>
+      <div class="nav-item" onclick="window.location.href='/courses'"><span class="nav-icon">📚</span>My courses</div>
       <div class="nav-item"><span class="nav-icon">🤖</span>AI Chatbot</div>
       <div class="sidebar-section">Learning</div>
       <div class="nav-item"><span class="nav-icon">📝</span>Quizzes</div>
@@ -107,36 +117,73 @@
       <div class="nav-item" onclick="window.location.href='/profile'"><span class="nav-icon">👤</span>Profile</div>
       <div class="nav-item" onclick="logout()"><span class="nav-icon">🚪</span>Sign out</div>
     </aside>
+
     <main class="main">
+      <!-- greeting -->
       <div class="greeting-row">
-        <div class="greeting-text"><h2 id="greeting">Good morning!</h2><p id="greeting-sub">Here's your learning overview for today.</p></div>
+        <div class="greeting-text">
+          <h2 id="greeting">Good morning!</h2>
+          <p id="greeting-sub">Here's your learning overview for today.</p>
+        </div>
         <div id="verify-badge"></div>
       </div>
+
+      <!-- stat cards -->
       <div class="stat-grid">
-        <div class="stat-card"><div class="stat-label">Courses enrolled</div><div class="stat-value" id="stat-enrolled">0</div><div class="stat-sub">Active courses</div></div>
-        <div class="stat-card"><div class="stat-label">Completed</div><div class="stat-value" id="stat-completed">0</div><div class="stat-sub">Finished courses</div></div>
-        <div class="stat-card"><div class="stat-label">Quizzes taken</div><div class="stat-value" id="stat-quizzes">0</div><div class="stat-sub">All time</div></div>
-        <div class="stat-card"><div class="stat-label">Study streak</div><div class="stat-value" id="stat-streak">1</div><div class="stat-sub">Days in a row</div></div>
-      </div>
-      <div class="section-header"><h3>My courses</h3><a onclick="toast('Course system coming in Week 3!')">Browse all →</a></div>
-      <div class="courses-grid">
-        <div class="empty-courses">
-          <div style="font-size:40px;margin-bottom:1rem;">📚</div>
-          <p>You haven't enrolled in any courses yet.</p>
-          <button class="btn btn-primary" onclick="toast('Course system coming in Week 3!')">Browse courses</button>
+        <div class="stat-card">
+          <div class="stat-label">Courses enrolled</div>
+          <div class="stat-value" id="stat-enrolled">—</div>
+          <div class="stat-sub">Active courses</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Completed</div>
+          <div class="stat-value" id="stat-completed">—</div>
+          <div class="stat-sub">Finished courses</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Quizzes taken</div>
+          <div class="stat-value" id="stat-quizzes">0</div>
+          <div class="stat-sub">All time</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Study streak</div>
+          <div class="stat-value" id="stat-streak">1</div>
+          <div class="stat-sub">Days in a row</div>
         </div>
       </div>
+
+      <!-- enrolled courses -->
+      <div class="section-header">
+        <h3>My courses</h3>
+        <a onclick="window.location.href='/courses'">Browse all →</a>
+      </div>
+      <div class="courses-grid" id="courses-grid">
+        <div style="grid-column:1/-1;text-align:center;padding:2rem;color:var(--text-muted);font-size:13px;">Loading courses...</div>
+      </div>
+
+      <!-- bottom grid -->
       <div class="bottom-grid">
+        <!-- chatbot -->
         <div class="chatbot-card">
-          <div class="chatbot-header"><h3>AI Course Chatbot</h3><div class="chatbot-status"><div class="status-dot"></div>Online</div></div>
+          <div class="chatbot-header">
+            <h3>AI Course Chatbot</h3>
+            <div class="chatbot-status">
+              <div class="status-dot"></div>
+              Online
+            </div>
+          </div>
           <div class="chatbot-messages" id="chat-messages">
-            <div class="msg msg-bot">👋 Hi! I'm your Phronesis AI assistant. Ask me anything about your enrolled courses and I'll give you in-depth answers.</div>
+            <div class="msg msg-bot">
+              👋 Hi! I'm your Phronesis AI assistant. Ask me anything about your enrolled courses and I'll give you in-depth answers.
+            </div>
           </div>
           <div class="chatbot-input-row">
             <input type="text" id="chat-input" placeholder="Ask about your courses..." onkeydown="if(event.key==='Enter') sendMessage()"/>
             <button onclick="sendMessage()">Send</button>
           </div>
         </div>
+
+        <!-- activity -->
         <div class="activity-card">
           <div class="activity-header"><h3>Recent activity</h3></div>
           <div class="activity-list" id="activity-list"></div>
@@ -144,24 +191,92 @@
       </div>
     </main>
   </div>
+
   <script src="static/app.js"></script>
   <script>
     requireAuth();
+
     const user = getUser();
-    const hour = new Date().getHours();
+
+    // ── greeting ──
+    const hour  = new Date().getHours();
     const greet = hour < 12 ? 'Good morning' : hour < 17 ? 'Good afternoon' : 'Good evening';
-    document.getElementById('greeting').textContent = `${greet}, ${user.name}!`;
+    document.getElementById('greeting').textContent     = `${greet}, ${user.name}!`;
+    document.getElementById('greeting-sub').textContent = `Welcome back. Here's your learning overview.`;
+
+    // ── navbar ──
     document.getElementById('nav-name').textContent   = user.name;
     document.getElementById('nav-avatar').textContent = initials(user.name);
+
+    // ── verified badge ──
     const badge = document.getElementById('verify-badge');
     if (user.is_verified) {
       badge.innerHTML = `<span class="verified-badge">✓ Verified</span>`;
     } else {
       badge.innerHTML = `<span class="unverified-badge" onclick="window.location.href='/verify'">⚠ Email not verified — click to verify</span>`;
     }
+
+    // ── load my courses ──
+    async function loadMyCourses() {
+      try {
+        const enrollments = await apiGet('/api/courses/my');
+        const grid = document.getElementById('courses-grid');
+
+        document.getElementById('stat-enrolled').textContent  = enrollments.length;
+        document.getElementById('stat-completed').textContent = enrollments.filter(e => e.completed).length;
+
+        if (!enrollments.length) {
+          grid.innerHTML = `
+            <div class="empty-courses">
+              <div style="font-size:40px;margin-bottom:1rem;">📚</div>
+              <p>You haven't enrolled in any courses yet.</p>
+              <button class="btn btn-primary" onclick="window.location.href='/courses'">Browse courses</button>
+            </div>`;
+          return;
+        }
+
+        grid.innerHTML = enrollments.map(e => `
+          <div class="course-card" onclick="window.location.href='/course/${e.course_id}'">
+            <div class="course-tag">${e.course.price === 0 ? 'Free' : '₹' + e.course.price}</div>
+            <div class="course-title">${e.course.title}</div>
+            <div class="course-desc">${e.course.description ? e.course.description.substring(0,80) + '...' : 'No description.'}</div>
+            <div class="course-progress-bar">
+              <div class="course-progress-fill" id="prog-${e.course_id}" style="width:0%"></div>
+            </div>
+            <div class="course-progress-text" id="prog-text-${e.course_id}">Loading progress...</div>
+          </div>
+        `).join('');
+
+        // load progress for each course
+        enrollments.forEach(async e => {
+          try {
+            const prog = await apiGet(`/api/courses/${e.course_id}/progress`);
+            const bar  = document.getElementById(`prog-${e.course_id}`);
+            const txt  = document.getElementById(`prog-text-${e.course_id}`);
+            if (bar) bar.style.width = prog.percentage + '%';
+            if (txt) txt.textContent = `${prog.percentage}% complete · ${prog.completed_lessons}/${prog.total_lessons} lessons`;
+          } catch (_) {
+            const txt = document.getElementById(`prog-text-${e.course_id}`);
+            if (txt) txt.textContent = 'Progress unavailable';
+          }
+        });
+
+      } catch (err) {
+        document.getElementById('stat-enrolled').textContent  = '0';
+        document.getElementById('stat-completed').textContent = '0';
+        document.getElementById('courses-grid').innerHTML = `
+          <div class="empty-courses">
+            <div style="font-size:40px;margin-bottom:1rem;">📚</div>
+            <p>You haven't enrolled in any courses yet.</p>
+            <button class="btn btn-primary" onclick="window.location.href='/courses'">Browse courses</button>
+          </div>`;
+      }
+    }
+
+    // ── activity feed ──
     const activities = [
       { color: '#6c63ff', text: `Logged in as ${user.name}`, time: 'Just now' },
-      { color: '#2e7d32', text: 'Account created', time: 'Today' },
+      { color: '#2e7d32', text: 'Account created',           time: 'Today' },
     ];
     document.getElementById('activity-list').innerHTML = activities.map(a => `
       <div class="activity-item">
@@ -169,8 +284,11 @@
         <div class="activity-text">${a.text}</div>
         <div class="activity-time">${a.time}</div>
       </div>`).join('');
+
+    // ── chatbot ──
     const chatMessages = document.getElementById('chat-messages');
     const chatInput    = document.getElementById('chat-input');
+
     function sendMessage() {
       const text = chatInput.value.trim();
       if (!text) return;
@@ -186,8 +304,17 @@
         chatMessages.scrollTop = chatMessages.scrollHeight;
       }, 1200);
     }
-    function toggleDropdown() { document.getElementById('profile-dropdown').classList.toggle('open'); }
-    document.addEventListener('click', e => { if (!e.target.closest('.profile-menu')) document.getElementById('profile-dropdown').classList.remove('open'); });
+
+    // ── dropdown ──
+    function toggleDropdown() {
+      document.getElementById('profile-dropdown').classList.toggle('open');
+    }
+    document.addEventListener('click', e => {
+      if (!e.target.closest('.profile-menu'))
+        document.getElementById('profile-dropdown').classList.remove('open');
+    });
+
+    loadMyCourses();
   </script>
 </body>
 </html>
