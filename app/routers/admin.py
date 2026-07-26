@@ -1,11 +1,14 @@
 from datetime import datetime, timedelta, timezone
 from typing import List
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from app.database import get_db
 from app.models.user import User
+from app.models.course import Course
+from app.models.enrollment import Enrollment
+from app.models.progress import Progress
 from app.schemas.user import UserResponse
-from app.services.auth import get_current_user, require_admin, hash_password
+from app.services.auth import require_admin, hash_password
 
 router = APIRouter(prefix="/api/admin", tags=["Admin"])
 
@@ -18,6 +21,22 @@ def setup_admin(name: str, email: str, password: str, db: Session = Depends(get_
     admin = User(name=name, email=email, password=hash_password(password), role="admin", is_verified=True)
     db.add(admin); db.commit(); db.refresh(admin)
     return UserResponse.model_validate(admin)
+
+@router.get("/stats")
+def get_stats(db: Session = Depends(get_db), admin=Depends(require_admin)):
+    total_users       = db.query(User).filter(User.role != "admin").count()
+    total_courses     = db.query(Course).filter(Course.is_published == True).count()
+    total_enrollments = db.query(Enrollment).count()
+    total_progress    = db.query(Progress).filter(Progress.completed == True).count()
+    cutoff = datetime.now(timezone.utc) - timedelta(hours=24)
+    active_today = db.query(User).filter(User.is_active == True, User.last_login >= cutoff).count()
+    return {
+        "total_users":       total_users,
+        "total_courses":     total_courses,
+        "total_enrollments": total_enrollments,
+        "lessons_completed": total_progress,
+        "active_today":      active_today,
+    }
 
 @router.get("/users", response_model=List[UserResponse])
 def get_all_users(db: Session = Depends(get_db), admin=Depends(require_admin)):

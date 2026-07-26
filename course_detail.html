@@ -4,7 +4,7 @@
   <meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Phronesis — Course</title>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
   <link rel="stylesheet" href="/static/style.css"/>
   <style>
     body{background:#f4f4f6;min-height:100vh}
@@ -14,44 +14,83 @@
     .course-hero{background:#0a0a14;border-radius:16px;padding:2.5rem;margin-bottom:1.5rem;position:relative;overflow:hidden}
     .course-hero::before{content:'';position:absolute;top:-60px;right:-60px;width:250px;height:250px;border-radius:50%;background:radial-gradient(circle,rgba(108,99,255,0.15) 0%,transparent 70%)}
     .course-hero-tag{background:rgba(108,99,255,0.2);color:#a89cff;font-size:11px;font-weight:500;padding:4px 12px;border-radius:100px;display:inline-block;margin-bottom:1rem}
-    .course-hero h1{font-size:1.75rem;font-weight:700;color:#fff;margin-bottom:0.75rem;line-height:1.3;position:relative;z-index:1}
+    .course-hero h1{font-size:1.75rem;font-weight:700;color:#fff;margin-bottom:.75rem;line-height:1.3;position:relative;z-index:1}
     .course-hero p{font-size:14px;color:#888;line-height:1.7;margin-bottom:1.5rem;position:relative;z-index:1}
-    .course-hero-meta{display:flex;align-items:center;gap:1.5rem;font-size:13px;color:#666;position:relative;z-index:1}
+    .course-hero-meta{display:flex;align-items:center;gap:1.5rem;font-size:13px;color:#666;position:relative;z-index:1;flex-wrap:wrap}
     .course-hero-actions{display:flex;align-items:center;gap:12px;margin-top:1.5rem;position:relative;z-index:1;flex-wrap:wrap}
     .layout{display:grid;grid-template-columns:1fr 300px;gap:1.5rem}
     .lessons-section h3{font-size:15px;font-weight:600;color:var(--text-primary);margin-bottom:1rem}
     .lesson-item{background:#fff;border:0.5px solid var(--border);border-radius:var(--radius-sm);padding:1rem 1.25rem;margin-bottom:8px;display:flex;align-items:center;gap:12px;cursor:pointer;transition:all 0.15s}
     .lesson-item:hover{border-color:var(--brand);box-shadow:0 2px 8px rgba(108,99,255,0.1)}
-    .lesson-item.locked{opacity:0.6;cursor:not-allowed}
+    .lesson-item.locked{opacity:.6;cursor:not-allowed}
     .lesson-item.completed{border-left:3px solid #2e7d32}
-    .lesson-number{width:28px;height:28px;border-radius:50%;background:var(--bg-surface);border:0.5px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;color:var(--text-muted);flex-shrink:0}
-    .lesson-number.done{background:#e8f5e9;border-color:#c8e6c9;color:#2e7d32}
+    .lesson-num{width:28px;height:28px;border-radius:50%;background:var(--bg-surface);border:.5px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;color:var(--text-muted);flex-shrink:0}
+    .lesson-num.done{background:#e8f5e9;border-color:#c8e6c9;color:#2e7d32}
     .lesson-info{flex:1}
-    .lesson-title{font-size:13px;font-weight:500;color:var(--text-primary);margin-bottom:3px}
+    .lesson-title-text{font-size:13px;font-weight:500;color:var(--text-primary);margin-bottom:3px}
     .lesson-meta-text{font-size:11px;color:var(--text-muted)}
     .lesson-free-badge{font-size:10px;background:#e8f5e9;color:#2e7d32;padding:2px 7px;border-radius:20px;font-weight:500;margin-left:6px}
-    .sidebar-card{background:#fff;border:0.5px solid var(--border);border-radius:var(--radius-md);padding:1.25rem;margin-bottom:1rem}
+    .lesson-actions{display:flex;gap:6px;flex-shrink:0;align-items:center}
+    .quiz-btn-small{font-size:10px;padding:3px 10px;background:#eeecff;color:#4a43b8;border:0.5px solid #c4beff;border-radius:20px;cursor:pointer;font-family:var(--font);font-weight:500;transition:all 0.15s}
+    .quiz-btn-small:hover{background:#d4d0ff}
+    .sidebar-card{background:#fff;border:.5px solid var(--border);border-radius:var(--radius-md);padding:1.25rem;margin-bottom:1rem}
     .sidebar-card h3{font-size:14px;font-weight:600;color:var(--text-primary);margin-bottom:1rem}
     .progress-bar{height:8px;background:#eee;border-radius:4px;overflow:hidden;margin-bottom:6px}
-    .progress-fill{height:100%;background:var(--brand);border-radius:4px;transition:width 0.6s ease}
+    .progress-fill{height:100%;background:var(--brand);border-radius:4px;transition:width .6s ease}
     .progress-text{display:flex;justify-content:space-between;font-size:12px;color:var(--text-muted)}
-    .info-row{display:flex;justify-content:space-between;padding:8px 0;border-bottom:0.5px solid #f5f5f5;font-size:13px}
+    .info-row{display:flex;justify-content:space-between;padding:8px 0;border-bottom:.5px solid #f5f5f5;font-size:13px}
     .info-row:last-child{border-bottom:none}
     .info-row span:first-child{color:var(--text-muted)}
     .info-row span:last-child{font-weight:500}
+    .completed-badge{background:#e8f5e9;color:#2e7d32;font-size:12px;padding:4px 12px;border-radius:20px;font-weight:500}
+    /* modals */
     .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:1000;align-items:center;justify-content:center;padding:2rem}
     .modal-overlay.show{display:flex}
-    .lesson-modal{background:#fff;border-radius:16px;width:100%;max-width:700px;max-height:85vh;overflow-y:auto}
-    .modal-header{padding:1.25rem 1.5rem;border-bottom:0.5px solid var(--border);display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;background:#fff;z-index:10}
+    .modal-box{background:#fff;border-radius:16px;width:100%;max-width:700px;max-height:88vh;overflow-y:auto;display:flex;flex-direction:column}
+    .modal-header{padding:1.25rem 1.5rem;border-bottom:.5px solid var(--border);display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;background:#fff;z-index:10;flex-shrink:0}
     .modal-header h3{font-size:15px;font-weight:600}
-    .modal-close{background:none;border:none;font-size:22px;cursor:pointer;color:var(--text-muted);padding:0}
-    .modal-body{padding:1.5rem}
-    .lesson-content{font-size:14px;line-height:1.8;color:var(--text-primary);white-space:pre-wrap;font-family:'Courier New',monospace}
-    .modal-footer{padding:1rem 1.5rem;border-top:0.5px solid var(--border);display:flex;justify-content:space-between;align-items:center;background:#fafafa}
-    /* study plan modal */
-    .plan-content{font-size:13px;line-height:1.8;color:var(--text-primary);white-space:pre-wrap;background:var(--bg-surface);padding:1.25rem;border-radius:var(--radius-md);border:0.5px solid var(--border);max-height:420px;overflow-y:auto}
-    .plan-content strong{color:var(--brand)}
-    .completed-badge{background:#e8f5e9;color:#2e7d32;font-size:12px;padding:4px 12px;border-radius:20px;font-weight:500}
+    .modal-header-sub{font-size:11px;color:var(--text-muted);margin-top:2px}
+    .modal-close{background:none;border:none;font-size:22px;cursor:pointer;color:var(--text-muted);padding:0;line-height:1}
+    .modal-body{padding:1.5rem;flex:1}
+    .modal-footer{padding:1rem 1.5rem;border-top:.5px solid var(--border);display:flex;justify-content:space-between;align-items:center;background:#fafafa;flex-shrink:0}
+    .lesson-content{font-size:14px;line-height:1.8;color:var(--text-primary);white-space:pre-wrap;font-family:'JetBrains Mono',monospace}
+    /* quiz */
+    .quiz-question{margin-bottom:1.5rem;padding:1.25rem;background:var(--bg-surface);border-radius:var(--radius-md);border:.5px solid var(--border)}
+    .quiz-q-text{font-size:14px;font-weight:600;color:var(--text-primary);margin-bottom:1rem}
+    .quiz-q-num{font-size:11px;font-weight:600;color:var(--brand);margin-bottom:6px;text-transform:uppercase;letter-spacing:0.06em}
+    .quiz-option{display:flex;align-items:center;gap:10px;padding:10px 14px;border:.5px solid var(--border);border-radius:var(--radius-sm);cursor:pointer;margin-bottom:6px;font-size:13px;background:#fff;transition:all 0.15s}
+    .quiz-option:hover{border-color:var(--brand);background:#f5f4ff}
+    .quiz-option.selected{border-color:var(--brand);background:#eeecff}
+    .quiz-option.correct{border-color:#2e7d32;background:#e8f5e9;color:#2e7d32}
+    .quiz-option.wrong{border-color:#c62828;background:#ffebee;color:#c62828}
+    .quiz-option input[type=radio]{accent-color:var(--brand)}
+    .quiz-result-bar{background:#fff;border:.5px solid var(--border);border-radius:16px;padding:2rem;text-align:center;margin-bottom:1rem}
+    .quiz-result-score{font-size:3rem;font-weight:700;color:var(--text-primary);line-height:1;margin-bottom:4px}
+    .quiz-result-label{font-size:13px;color:var(--text-muted);margin-bottom:1rem}
+    .quiz-result-badge{display:inline-block;padding:6px 18px;border-radius:100px;font-size:13px;font-weight:600}
+    .quiz-result-badge.pass{background:#e8f5e9;color:#2e7d32}
+    .quiz-result-badge.fail{background:#ffebee;color:#c62828}
+    .explanation{font-size:12px;color:var(--text-muted);margin-top:6px;padding:6px 10px;background:#f8f8f8;border-radius:6px;border-left:3px solid var(--brand)}
+    /* chat modal */
+    .chat-modal-box{background:#fff;border-radius:16px;width:100%;max-width:640px;height:78vh;display:flex;flex-direction:column;overflow:hidden}
+    .chat-messages{flex:1;overflow-y:auto;padding:1.25rem;display:flex;flex-direction:column;gap:10px;background:#f8f8fc}
+    .chat-msg{max-width:84%;padding:10px 14px;border-radius:12px;font-size:13px;line-height:1.6;word-break:break-word}
+    .chat-msg.bot{background:#fff;border:.5px solid var(--border);border-radius:4px 12px 12px 12px;align-self:flex-start;color:var(--text-primary)}
+    .chat-msg.user{background:var(--brand);color:#fff;border-radius:12px 4px 12px 12px;align-self:flex-end}
+    .chat-msg.typing{background:#f0f0f5;color:var(--text-muted);font-style:italic;align-self:flex-start;border-radius:4px 12px 12px 12px}
+    .chat-msg pre{background:#1e1e2e;color:#cdd6f4;padding:12px;border-radius:8px;overflow-x:auto;margin:8px 0;font-size:12px;line-height:1.6;font-family:'JetBrains Mono',monospace}
+    .chat-msg code{background:#f0f0f5;color:#6c63ff;padding:2px 6px;border-radius:4px;font-size:12px;font-family:'JetBrains Mono',monospace}
+    .chat-msg pre code{background:none;color:inherit;padding:0}
+    .chat-msg strong{font-weight:600}
+    .chat-input-row{padding:.875rem 1rem;border-top:.5px solid var(--border);display:flex;gap:8px;background:#fff;flex-shrink:0}
+    .chat-input-row input{flex:1;height:40px;border:.5px solid var(--border);border-radius:10px;padding:0 14px;font-size:13px;outline:none;font-family:var(--font)}
+    .chat-input-row input:focus{border-color:var(--brand)}
+    .chat-input-row button{height:40px;padding:0 18px;background:var(--brand);color:#fff;border:none;border-radius:10px;font-size:13px;font-weight:500;cursor:pointer;transition:opacity .15s}
+    .chat-input-row button:hover{opacity:.9}
+    .chat-input-row button:disabled{opacity:.5;cursor:not-allowed}
+    .chat-clear-btn{font-size:11px;color:var(--text-muted);background:none;border:none;cursor:pointer;font-family:var(--font);padding:0}
+    .chat-clear-btn:hover{color:var(--danger)}
+    .plan-content{font-size:13px;line-height:1.8;color:var(--text-primary);white-space:pre-wrap;background:var(--bg-surface);padding:1.25rem;border-radius:var(--radius-md);border:.5px solid var(--border);max-height:420px;overflow-y:auto;font-family:'JetBrains Mono',monospace}
   </style>
 </head>
 <body>
@@ -60,12 +99,14 @@
     <div class="navbar-right">
       <div class="avatar" id="nav-avatar">?</div>
       <span style="font-size:13px;color:#aaa" id="nav-name"></span>
+      <button class="btn btn-ghost-light btn-sm" onclick="window.location.href='/dashboard'">Dashboard</button>
       <button class="btn btn-ghost-light btn-sm" onclick="logout()">Sign out</button>
     </div>
   </nav>
+
   <div class="page">
     <button class="back-btn" onclick="window.location.href='/courses'">← Back to courses</button>
-    <div class="course-hero" id="course-hero">
+    <div class="course-hero">
       <div class="course-hero-tag">Course</div>
       <h1 id="hero-title">Loading...</h1>
       <p id="hero-desc"></p>
@@ -75,12 +116,14 @@
         <span id="hero-price"></span>
       </div>
       <div class="course-hero-actions">
-        <button class="btn btn-primary" id="enroll-btn" onclick="handleEnroll()" style="display:none">Enroll now — Free</button>
-        <button class="btn btn-ghost-light" id="unenroll-btn" onclick="handleUnenroll()" style="display:none">Unenroll</button>
-        <span id="enrolled-label" style="display:none;color:#a89cff;font-size:13px;font-weight:500">✓ Enrolled</span>
+        <button class="btn btn-primary"     id="enroll-btn"     onclick="handleEnroll()"       style="display:none">Enroll now</button>
+        <button class="btn btn-ghost-light" id="unenroll-btn"   onclick="handleUnenroll()"     style="display:none">Unenroll</button>
+        <span                               id="enrolled-label"                                 style="display:none;color:#a89cff;font-size:13px;font-weight:500">✓ Enrolled</span>
         <button class="btn btn-ghost-light" id="study-plan-btn" onclick="openStudyPlanModal()" style="display:none">📅 Study plan</button>
+        <button class="btn btn-ghost-light" id="chat-btn"       onclick="openChatModal()"      style="display:none">🤖 Ask AI</button>
       </div>
     </div>
+
     <div class="layout">
       <div class="lessons-section">
         <h3 id="lessons-heading">Lessons</h3>
@@ -104,39 +147,37 @@
     </div>
   </div>
 
-  <!-- lesson modal -->
+  <!-- LESSON MODAL -->
   <div class="modal-overlay" id="lesson-modal">
-    <div class="lesson-modal">
+    <div class="modal-box">
       <div class="modal-header">
-        <h3 id="modal-lesson-title">Lesson</h3>
+        <div><h3 id="modal-lesson-title">Lesson</h3><div class="modal-header-sub" id="modal-lesson-meta"></div></div>
         <button class="modal-close" onclick="closeLesson()">×</button>
       </div>
       <div class="modal-body"><div class="lesson-content" id="modal-lesson-content"></div></div>
       <div class="modal-footer">
-        <span id="modal-lesson-meta" style="font-size:12px;color:var(--text-muted)"></span>
+        <button class="btn btn-outline btn-sm" id="take-quiz-btn" onclick="openQuizFromLesson()" style="display:none">🧠 Take quiz</button>
         <button class="btn btn-primary btn-sm" id="complete-btn" onclick="toggleComplete()" style="display:none">Mark as complete</button>
       </div>
     </div>
   </div>
 
-  <!-- study plan modal -->
+  <!-- STUDY PLAN MODAL -->
   <div class="modal-overlay" id="study-plan-modal">
-    <div class="lesson-modal" style="max-width:620px">
+    <div class="modal-box" style="max-width:620px">
       <div class="modal-header">
-        <h3>📅 AI Study Plan</h3>
+        <div><h3>📅 Study Plan</h3><div class="modal-header-sub">Personalised day-by-day schedule</div></div>
         <button class="modal-close" onclick="closeStudyPlanModal()">×</button>
       </div>
       <div class="modal-body">
         <div id="plan-form">
-          <p style="font-size:13px;color:var(--text-muted);margin-bottom:1.25rem;line-height:1.6">
-            Tell us your target completion date and we'll build a personalised day-by-day study schedule for your remaining lessons.
-          </p>
+          <p style="font-size:13px;color:var(--text-muted);margin-bottom:1.25rem;line-height:1.6">Pick a target date and we'll build a personalised study schedule from your remaining lessons.</p>
           <div class="field"><label>Target completion date</label><input type="date" id="target-date" style="width:100%"/></div>
           <button class="btn btn-primary btn-full" id="generate-btn" onclick="generatePlan()">📅 Generate my study plan</button>
         </div>
         <div id="plan-result" style="display:none">
           <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem">
-            <span style="font-size:12px;color:var(--text-muted)">📅 Personalised schedule</span>
+            <span style="font-size:12px;color:var(--text-muted)">📅 Your personalised schedule</span>
             <button class="btn btn-outline btn-sm" onclick="showPlanForm()">Regenerate</button>
           </div>
           <div class="plan-content" id="plan-content"></div>
@@ -145,158 +186,353 @@
     </div>
   </div>
 
+  <!-- QUIZ MODAL -->
+  <div class="modal-overlay" id="quiz-modal">
+    <div class="modal-box" style="max-width:680px">
+      <div class="modal-header">
+        <div><h3>🧠 Quiz</h3><div class="modal-header-sub" id="quiz-lesson-title-sub"></div></div>
+        <button class="modal-close" onclick="closeQuizModal()">×</button>
+      </div>
+      <div class="modal-body" id="quiz-body">
+        <div style="text-align:center;padding:2rem;color:var(--text-muted)">Loading quiz...</div>
+      </div>
+      <div class="modal-footer" id="quiz-footer" style="display:none">
+        <span id="quiz-footer-info" style="font-size:12px;color:var(--text-muted)"></span>
+        <div style="display:flex;gap:8px">
+          <button class="btn btn-outline btn-sm" onclick="retakeQuiz()">Retake</button>
+          <button class="btn btn-primary btn-sm" id="submit-quiz-btn" onclick="submitQuiz()">Submit answers</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CHAT MODAL -->
+  <div class="modal-overlay" id="chat-modal">
+    <div class="chat-modal-box">
+      <div class="modal-header" style="flex-shrink:0">
+        <div><h3>🤖 AI Course Tutor</h3><div class="modal-header-sub" id="chat-status-wrap"></div></div>
+        <div style="display:flex;align-items:center;gap:12px">
+          <button class="chat-clear-btn" onclick="clearCourseChat()">Clear chat</button>
+          <button class="modal-close" onclick="closeChatModal()">×</button>
+        </div>
+      </div>
+      <div class="chat-messages" id="chat-messages">
+        <div class="chat-msg bot" id="chat-welcome">👋 Hi! I'm your AI tutor. Ask me anything about this course!</div>
+      </div>
+      <div class="chat-input-row">
+        <input type="text" id="chat-input" placeholder="Ask about this course..." onkeydown="if(event.key==='Enter'&&!event.shiftKey)sendChat()"/>
+        <button id="send-btn" onclick="sendChat()">Send</button>
+      </div>
+    </div>
+  </div>
+
   <script src="/static/app.js"></script>
   <script>
     requireAuth();
-    const user      = getUser();
-    const courseId  = window.location.pathname.split('/').pop();
-    document.getElementById('nav-name').textContent   = user.name;
-    document.getElementById('nav-avatar').textContent = initials(user.name);
+    const user=getUser();
+    const courseId=window.location.pathname.split('/').pop();
+    const CHAT_KEY = `phronesis_course_chat_${courseId}`;
+    const HIST_KEY = `phronesis_course_hist_${courseId}`;
+    document.getElementById('nav-name').textContent=user.name;
+    document.getElementById('nav-avatar').textContent=initials(user.name);
 
-    let courseData = null, enrolled = false, completedIds = new Set(), currentLesson = null;
+    let courseData=null,enrolled=false,completedIds=new Set(),currentLesson=null,chatHistory=[],isSending=false;
+    let quizData=null,quizLessonId=null,userAnswers=[];
 
-    async function loadCourse() {
-      try {
-        // check enrollment first
-        try {
-          const myEnrollments = await apiGet('/api/courses/my');
-          enrolled = myEnrollments.some(e => e.course_id === courseId);
-        } catch(_) { enrolled = false; }
-        courseData = await apiGet(`/api/courses/${courseId}`);
-        renderHero();
-        renderLessons();
-        if (enrolled) await loadProgress();
-      } catch(err) { toast(err.message, 'error'); }
+    // ── markdown formatter ──
+    function formatMsg(text){
+      text=text.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+      text=text.replace(/```(\w+)?\n?([\s\S]*?)```/g,(_,lang,code)=>
+        `<pre><code>${code.trim()}</code></pre>`);
+      text=text.replace(/`([^`\n]+)`/g,'<code>$1</code>');
+      text=text.replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>');
+      text=text.replace(/\*(.*?)\*/g,'<em>$1</em>');
+      text=text.replace(/\n/g,'<br/>');
+      return text;
     }
 
-    function renderHero() {
-      document.title = `Phronesis — ${courseData.title}`;
-      document.getElementById('hero-title').textContent    = courseData.title;
-      document.getElementById('hero-desc').textContent     = courseData.description || '';
-      document.getElementById('hero-lessons').textContent  = `${courseData.total_lessons} lessons`;
-      document.getElementById('hero-duration').textContent = courseData.total_duration_min ? `${courseData.total_duration_min} min total` : '';
-      document.getElementById('hero-price').textContent    = courseData.price === 0 ? 'Free' : `₹${courseData.price}`;
-      document.getElementById('info-lessons').textContent  = courseData.total_lessons;
-      document.getElementById('info-duration').textContent = courseData.total_duration_min ? `${courseData.total_duration_min} min` : 'Self-paced';
-      document.getElementById('info-price').textContent    = courseData.price === 0 ? 'Free' : `₹${courseData.price}`;
-      if (enrolled) {
-        document.getElementById('enrolled-label').style.display  = 'inline';
-        document.getElementById('unenroll-btn').style.display    = 'inline-flex';
-        document.getElementById('study-plan-btn').style.display  = 'inline-flex';
-        document.getElementById('info-access').textContent       = 'Full access';
-        document.getElementById('progress-card').style.display   = 'block';
-      } else {
-        document.getElementById('enroll-btn').style.display      = 'inline-flex';
-        document.getElementById('enroll-btn').textContent        = courseData.price === 0 ? 'Enroll now — Free' : `Enroll — ₹${courseData.price}`;
-        document.getElementById('info-access').textContent       = 'Enroll to unlock';
+    async function loadCourse(){
+      try{
+        try{const my=await apiGet('/api/courses/my');enrolled=my.some(e=>e.course_id===courseId);}catch(_){enrolled=false;}
+        courseData=await apiGet(`/api/courses/${courseId}`);
+        renderHero();renderLessons();
+        if(enrolled)await loadProgress();
+      }catch(err){toast(err.message,'error')}
+    }
+
+    function renderHero(){
+      document.title=`Phronesis — ${courseData.title}`;
+      document.getElementById('hero-title').textContent=courseData.title;
+      document.getElementById('hero-desc').textContent=courseData.description||'';
+      document.getElementById('hero-lessons').textContent=`${courseData.total_lessons} lessons`;
+      document.getElementById('hero-duration').textContent=courseData.total_duration_min?`${courseData.total_duration_min} min total`:'';
+      document.getElementById('hero-price').textContent=courseData.price===0?'Free':`₹${courseData.price}`;
+      document.getElementById('info-lessons').textContent=courseData.total_lessons;
+      document.getElementById('info-duration').textContent=courseData.total_duration_min?`${courseData.total_duration_min} min`:'Self-paced';
+      document.getElementById('info-price').textContent=courseData.price===0?'Free':`₹${courseData.price}`;
+      if(enrolled){
+        document.getElementById('enrolled-label').style.display='inline';
+        document.getElementById('unenroll-btn').style.display='inline-flex';
+        document.getElementById('study-plan-btn').style.display='inline-flex';
+        document.getElementById('chat-btn').style.display='inline-flex';
+        document.getElementById('info-access').textContent='Full access';
+        document.getElementById('progress-card').style.display='block';
+      }else{
+        document.getElementById('enroll-btn').style.display='inline-flex';
+        document.getElementById('enroll-btn').textContent=courseData.price===0?'Enroll now — Free':`Enroll — ₹${courseData.price}`;
+        document.getElementById('chat-btn').style.display='inline-flex';
+        document.getElementById('info-access').textContent='Enroll to unlock all lessons';
       }
     }
 
-    function renderLessons() {
-      document.getElementById('lessons-heading').textContent = `Lessons (${courseData.total_lessons})`;
-      const list = document.getElementById('lessons-list');
-      if (!courseData.lessons.length) { list.innerHTML = '<p style="color:var(--text-muted);font-size:13px">No lessons yet.</p>'; return; }
-      list.innerHTML = courseData.lessons.map(l => {
-        const done   = completedIds.has(l.id);
-        const locked = l.is_locked && !l.is_free;
+    function renderLessons(){
+      document.getElementById('lessons-heading').textContent=`Lessons (${courseData.total_lessons})`;
+      const list=document.getElementById('lessons-list');
+      if(!courseData.lessons.length){list.innerHTML='<p style="color:var(--text-muted);font-size:13px">No lessons yet.</p>';return;}
+      list.innerHTML=courseData.lessons.map(l=>{
+        const done=completedIds.has(l.id),locked=l.is_locked&&!l.is_free;
         return `<div class="lesson-item ${locked?'locked':''} ${done?'completed':''}" onclick="${locked?'':` openLesson('${l.id}')`}">
-          <div class="lesson-number ${done?'done':''}">${done?'✓':l.order}</div>
+          <div class="lesson-num ${done?'done':''}">${done?'✓':l.order}</div>
           <div class="lesson-info">
-            <div class="lesson-title">${l.title}${l.is_free?'<span class="lesson-free-badge">Preview</span>':''}</div>
-            <div class="lesson-meta-text">${l.duration_min?l.duration_min+' min':'No duration'}</div>
+            <div class="lesson-title-text">${l.title}${l.is_free?'<span class="lesson-free-badge">Preview</span>':''}</div>
+            <div class="lesson-meta-text">${l.duration_min?l.duration_min+' min':'No duration set'}</div>
           </div>
-          <div style="font-size:14px;color:var(--text-muted)">${locked?'🔒':done?'✓':'→'}</div>
+          <div class="lesson-actions">
+            ${enrolled&&!locked?`<button class="quiz-btn-small" onclick="event.stopPropagation();openQuizModal('${l.id}','${l.title}')">🧠 Quiz</button>`:''}
+            <span style="font-size:14px;color:var(--text-muted)">${locked?'🔒':done?'':' →'}</span>
+          </div>
         </div>`;
       }).join('');
     }
 
-    async function loadProgress() {
-      try {
-        const prog = await apiGet(`/api/courses/${courseId}/progress`);
-        completedIds = new Set();
-        document.getElementById('progress-fill').style.width = prog.percentage + '%';
-        document.getElementById('progress-text').textContent = `${prog.completed_lessons} of ${prog.total_lessons} lessons`;
-        document.getElementById('progress-pct').textContent  = prog.percentage + '%';
-        if (prog.is_completed) document.getElementById('completed-badge-wrap').style.display = 'block';
+    async function loadProgress(){
+      try{
+        const prog=await apiGet(`/api/courses/${courseId}/progress`);
+        completedIds=new Set();
+        document.getElementById('progress-fill').style.width=prog.percentage+'%';
+        document.getElementById('progress-text').textContent=`${prog.completed_lessons} of ${prog.total_lessons} lessons`;
+        document.getElementById('progress-pct').textContent=prog.percentage+'%';
+        if(prog.is_completed)document.getElementById('completed-badge-wrap').style.display='block';
         renderLessons();
-      } catch(_) {}
+      }catch(_){}
     }
 
-    function openLesson(lessonId) {
-      const lesson = courseData.lessons.find(l => l.id === lessonId);
-      if (!lesson) return;
-      currentLesson = lesson;
-      document.getElementById('modal-lesson-title').textContent   = lesson.title;
-      document.getElementById('modal-lesson-content').textContent = lesson.content || 'No content yet.';
-      document.getElementById('modal-lesson-meta').textContent    = lesson.duration_min ? `${lesson.duration_min} min read` : '';
-      const done = completedIds.has(lessonId);
-      const btn  = document.getElementById('complete-btn');
-      btn.style.display   = enrolled ? 'inline-flex' : 'none';
-      btn.textContent     = done ? '✓ Completed' : 'Mark as complete';
-      btn.style.background = done ? '#2e7d32' : '';
+    function openLesson(lessonId){
+      const lesson=courseData.lessons.find(l=>l.id===lessonId);if(!lesson)return;
+      currentLesson=lesson;
+      document.getElementById('modal-lesson-title').textContent=lesson.title;
+      document.getElementById('modal-lesson-content').textContent=lesson.content||'No content yet.';
+      document.getElementById('modal-lesson-meta').textContent=lesson.duration_min?`${lesson.duration_min} min read`:'';
+      const done=completedIds.has(lessonId);
+      const btn=document.getElementById('complete-btn');
+      const quizBtn=document.getElementById('take-quiz-btn');
+      btn.style.display=enrolled?'inline-flex':'none';
+      btn.textContent=done?'✓ Completed':'Mark as complete';
+      btn.style.background=done?'#2e7d32':'';
+      quizBtn.style.display=enrolled?'inline-flex':'none';
       document.getElementById('lesson-modal').classList.add('show');
     }
-    function closeLesson() { document.getElementById('lesson-modal').classList.remove('show'); currentLesson = null; }
+    function closeLesson(){document.getElementById('lesson-modal').classList.remove('show');currentLesson=null;}
 
-    async function toggleComplete() {
-      if (!currentLesson || !enrolled) return;
-      const done = completedIds.has(currentLesson.id);
-      try {
-        await apiPost(`/api/courses/${courseId}/lessons/${currentLesson.id}/progress`, { completed: !done });
-        if (done) completedIds.delete(currentLesson.id); else completedIds.add(currentLesson.id);
-        const btn = document.getElementById('complete-btn');
-        btn.textContent     = done ? 'Mark as complete' : '✓ Completed';
-        btn.style.background = done ? '' : '#2e7d32';
+    async function toggleComplete(){
+      if(!currentLesson||!enrolled)return;
+      const done=completedIds.has(currentLesson.id);
+      try{
+        await apiPost(`/api/courses/${courseId}/lessons/${currentLesson.id}/progress`,{completed:!done});
+        if(done)completedIds.delete(currentLesson.id);else completedIds.add(currentLesson.id);
+        const btn=document.getElementById('complete-btn');
+        btn.textContent=done?'Mark as complete':'✓ Completed';
+        btn.style.background=done?'':'#2e7d32';
         await loadProgress();
-        toast(done ? 'Marked as incomplete' : 'Lesson completed! 🎉');
-      } catch(err) { toast(err.message, 'error'); }
+        toast(done?'Marked as incomplete':'Lesson completed! 🎉');
+      }catch(err){toast(err.message,'error')}
     }
 
-    async function handleEnroll() {
-      const btn = document.getElementById('enroll-btn');
-      setLoading(btn, true);
-      try {
-        await apiPost(`/api/courses/${courseId}/enroll`, {});
-        toast('Enrolled successfully! 🎉');
-        await loadCourse();
-      } catch(err) { toast(err.message, 'error'); setLoading(btn, false); }
+    async function handleEnroll(){
+      const btn=document.getElementById('enroll-btn');setLoading(btn,true);
+      try{await apiPost(`/api/courses/${courseId}/enroll`,{});toast('Enrolled! 🎉');await loadCourse();}
+      catch(err){toast(err.message,'error');setLoading(btn,false);}
+    }
+    async function handleUnenroll(){
+      if(!confirm('Unenroll? Your progress will be lost.'))return;
+      try{await apiDelete(`/api/courses/${courseId}/enroll`);toast('Unenrolled');await loadCourse();}
+      catch(err){toast(err.message,'error')}
     }
 
-    async function handleUnenroll() {
-      if (!confirm('Are you sure you want to unenroll? Your progress will be lost.')) return;
-      try { await apiDelete(`/api/courses/${courseId}/enroll`); toast('Unenrolled'); await loadCourse(); }
-      catch(err) { toast(err.message, 'error'); }
-    }
-
-    // ── Study plan ──
-    async function openStudyPlanModal() {
-      const tomorrow = new Date(); tomorrow.setDate(tomorrow.getDate()+1);
-      document.getElementById('target-date').min   = tomorrow.toISOString().split('T')[0];
-      document.getElementById('target-date').value = '';
-      try {
-        const existing = await apiGet(`/api/courses/${courseId}/study-plan`);
-        if (existing.plan) { renderPlan(existing.plan); }
-        else { showPlanForm(); }
-      } catch(_) { showPlanForm(); }
+    // ── STUDY PLAN ──
+    async function openStudyPlanModal(){
+      const tomorrow=new Date();tomorrow.setDate(tomorrow.getDate()+1);
+      document.getElementById('target-date').min=tomorrow.toISOString().split('T')[0];
+      document.getElementById('target-date').value='';
+      try{const e=await apiGet(`/api/courses/${courseId}/study-plan`);if(e.plan)renderPlan(e.plan);else showPlanForm();}
+      catch(_){showPlanForm();}
       document.getElementById('study-plan-modal').classList.add('show');
     }
-    function closeStudyPlanModal() { document.getElementById('study-plan-modal').classList.remove('show'); }
-    function showPlanForm() { document.getElementById('plan-form').style.display='block'; document.getElementById('plan-result').style.display='none'; }
-    function renderPlan(plan) {
-      document.getElementById('plan-content').textContent = plan;
-      document.getElementById('plan-form').style.display   = 'none';
-      document.getElementById('plan-result').style.display = 'block';
+    function closeStudyPlanModal(){document.getElementById('study-plan-modal').classList.remove('show')}
+    function showPlanForm(){document.getElementById('plan-form').style.display='block';document.getElementById('plan-result').style.display='none';}
+    function renderPlan(plan){document.getElementById('plan-content').textContent=plan;document.getElementById('plan-form').style.display='none';document.getElementById('plan-result').style.display='block';}
+    async function generatePlan(){
+      const targetDate=document.getElementById('target-date').value;const btn=document.getElementById('generate-btn');
+      if(!targetDate){toast('Please pick a target date','error');return;}
+      setLoading(btn,true);
+      try{const r=await apiPost(`/api/courses/${courseId}/study-plan?target_date=${targetDate}`,{});renderPlan(r.plan);toast('Study plan ready! 📅');}
+      catch(err){toast(err.message,'error');setLoading(btn,false);}
     }
-    async function generatePlan() {
-      const targetDate = document.getElementById('target-date').value;
-      const btn        = document.getElementById('generate-btn');
-      if (!targetDate) { toast('Please pick a target date', 'error'); return; }
-      setLoading(btn, true);
-      try {
-        const result = await apiPost(`/api/courses/${courseId}/study-plan?target_date=${targetDate}`, {});
-        renderPlan(result.plan);
-        toast('Study plan generated! 📅');
-      } catch(err) { toast(err.message, 'error'); setLoading(btn, false); }
+
+    // ── QUIZ ──
+    function openQuizFromLesson(){
+      if(!currentLesson)return;
+      closeLesson();
+      openQuizModal(currentLesson.id, currentLesson.title);
+    }
+
+    async function openQuizModal(lessonId, lessonTitle){
+      quizLessonId=lessonId;
+      userAnswers=[];
+      document.getElementById('quiz-lesson-title-sub').textContent=lessonTitle;
+      document.getElementById('quiz-body').innerHTML='<div style="text-align:center;padding:2rem;color:var(--text-muted)">Generating quiz...</div>';
+      document.getElementById('quiz-footer').style.display='none';
+      document.getElementById('quiz-modal').classList.add('show');
+      try{
+        quizData=await apiGet(`/api/courses/${courseId}/lessons/${lessonId}/quiz`);
+        renderQuiz();
+      }catch(err){
+        document.getElementById('quiz-body').innerHTML=`<p style="color:var(--danger)">${err.message}</p>`;
+      }
+    }
+    function closeQuizModal(){document.getElementById('quiz-modal').classList.remove('show');quizData=null;}
+
+    function renderQuiz(){
+      if(!quizData)return;
+      userAnswers=new Array(quizData.questions.length).fill(null);
+      document.querySelector('.quiz-result-bar')?.remove();
+      const html=quizData.questions.map((q,i)=>`
+        <div class="quiz-question">
+          <div class="quiz-q-num">Question ${i+1} of ${quizData.questions.length}</div>
+          <div class="quiz-q-text">${q.question}</div>
+          ${q.options.map((opt,j)=>`
+            <div class="quiz-option" id="opt-${i}-${j}" onclick="selectOption(${i},${j})">
+              <input type="radio" name="q${i}" value="${j}" id="radio-${i}-${j}"/>
+              <label for="radio-${i}-${j}" style="cursor:pointer;flex:1">${opt}</label>
+            </div>`).join('')}
+        </div>`).join('');
+      document.getElementById('quiz-body').innerHTML=html;
+      document.getElementById('quiz-footer').style.display='flex';
+      document.getElementById('quiz-footer-info').textContent=`${quizData.questions.length} questions · Select one answer per question`;
+      document.getElementById('submit-quiz-btn').style.display='inline-flex';
+    }
+
+    function selectOption(qIdx, optIdx){
+      userAnswers[qIdx]=optIdx;
+      // update UI
+      quizData.questions[qIdx].options.forEach((_,j)=>{
+        const el=document.getElementById(`opt-${qIdx}-${j}`);
+        if(el){el.classList.toggle('selected',j===optIdx);el.querySelector('input').checked=(j===optIdx);}
+      });
+    }
+
+    async function submitQuiz(){
+      if(userAnswers.some(a=>a===null)){toast('Please answer all questions','error');return;}
+      const btn=document.getElementById('submit-quiz-btn');
+      setLoading(btn,true);
+      try{
+        const result=await apiPost(`/api/courses/${courseId}/lessons/${quizLessonId}/quiz/submit`,userAnswers);
+        renderQuizResult(result);
+      }catch(err){toast(err.message,'error');setLoading(btn,false);}
+    }
+
+    function renderQuizResult(result){
+      // show correct/wrong highlighting
+      quizData.questions.forEach((q,i)=>{
+        const correct=result.correct_answers[i];
+        const chosen=userAnswers[i];
+        q.options.forEach((_,j)=>{
+          const el=document.getElementById(`opt-${i}-${j}`);
+          if(!el)return;
+          el.classList.remove('selected');
+          if(j===correct)el.classList.add('correct');
+          else if(j===chosen&&chosen!==correct)el.classList.add('wrong');
+        });
+        // add explanation
+        const qEl=document.getElementById(`opt-${i}-0`)?.closest('.quiz-question');
+        if(qEl&&q.explanation){
+          const exp=document.createElement('div');
+          exp.className='explanation';
+          exp.textContent='💡 '+q.explanation;
+          qEl.appendChild(exp);
+        }
+      });
+      // show result bar at top
+      const resultBar=`<div class="quiz-result-bar">
+        <div class="quiz-result-score">${result.score}/${result.total}</div>
+        <div class="quiz-result-label">${result.percentage}% correct</div>
+        <span class="quiz-result-badge ${result.passed?'pass':'fail'}">${result.passed?'🎉 Passed!':'Keep practising!'}</span>
+      </div>`;
+      document.getElementById('quiz-body').insertAdjacentHTML('afterbegin',resultBar);
+      document.getElementById('submit-quiz-btn').style.display='none';
+      document.getElementById('quiz-footer-info').textContent=`Score: ${result.score}/${result.total} — ${result.percentage}%`;
+      toast(result.passed?`Great job! ${result.score}/${result.total} correct 🎉`:`${result.score}/${result.total} correct — keep practising!`, result.passed?'default':'error');
+    }
+
+    function retakeQuiz(){renderQuiz();}
+
+    // ── CHAT ──
+    function loadChatFromStorage(){
+      try{
+        const saved=localStorage.getItem(CHAT_KEY);
+        if(saved){const msgs=JSON.parse(saved);if(msgs.length>0)document.getElementById('chat-welcome')?.remove();msgs.forEach(m=>_appendMsg(m.text,m.type,null,false));}
+        const savedHist=localStorage.getItem(HIST_KEY);
+        if(savedHist)chatHistory=JSON.parse(savedHist);
+      }catch(_){}
+    }
+    function saveChatToStorage(){
+      try{
+        const msgs=document.getElementById('chat-messages');
+        const msgObjs=Array.from(msgs.querySelectorAll('.chat-msg:not(.typing)')).map(el=>({text:el.dataset.raw||el.textContent,type:el.classList.contains('user')?'user':'bot'}));
+        localStorage.setItem(CHAT_KEY,JSON.stringify(msgObjs));
+        localStorage.setItem(HIST_KEY,JSON.stringify(chatHistory));
+      }catch(_){}
+    }
+    function clearCourseChat(){
+      localStorage.removeItem(CHAT_KEY);localStorage.removeItem(HIST_KEY);chatHistory=[];
+      document.getElementById('chat-messages').innerHTML='<div class="chat-msg bot" id="chat-welcome">👋 Hi! Ask me anything about this course!</div>';
+    }
+    function openChatModal(){
+      const wrap=document.getElementById('chat-status-wrap');
+      wrap.innerHTML=enrolled
+        ?'<span style="font-size:11px;background:#e8f5e9;color:#2e7d32;padding:3px 10px;border-radius:20px;font-weight:500">✓ Enrolled — full course context active</span>'
+        :'<span style="font-size:11px;background:#fff8e1;color:#f57f17;padding:3px 10px;border-radius:20px;font-weight:500">⚠ Not enrolled — overview mode</span>';
+      loadChatFromStorage();
+      document.getElementById('chat-modal').classList.add('show');
+      setTimeout(()=>{document.getElementById('chat-input').focus();const m=document.getElementById('chat-messages');m.scrollTop=m.scrollHeight;},100);
+    }
+    function closeChatModal(){document.getElementById('chat-modal').classList.remove('show')}
+
+    async function sendChat(){
+      if(isSending)return;
+      const input=document.getElementById('chat-input'),sendBtn=document.getElementById('send-btn');
+      const message=input.value.trim();if(!message)return;
+      isSending=true;sendBtn.disabled=true;
+      _appendMsg(message,'user');input.value='';
+      const typingId='typing-'+Date.now();_appendMsg('Thinking...','typing',typingId);
+      try{
+        const res=await apiPost(`/api/courses/${courseId}/chat?message=${encodeURIComponent(message)}`,chatHistory);
+        document.getElementById(typingId)?.remove();_appendMsg(res.reply,'bot');
+        chatHistory.push({role:'user',content:message});chatHistory.push({role:'assistant',content:res.reply});
+        if(chatHistory.length>12)chatHistory=chatHistory.slice(-12);
+        saveChatToStorage();
+      }catch(err){document.getElementById(typingId)?.remove();_appendMsg('Error: '+err.message,'bot');}
+      isSending=false;sendBtn.disabled=false;input.focus();
+    }
+
+    function _appendMsg(text,type,id,save=true){
+      const msgs=document.getElementById('chat-messages');
+      document.getElementById('chat-welcome')?.remove();
+      const div=document.createElement('div');
+      div.className='chat-msg '+type;div.dataset.raw=text;
+      if(type==='user'||type==='typing'){div.textContent=text;}
+      else{div.innerHTML=formatMsg(text);}
+      if(id)div.id=id;msgs.appendChild(div);msgs.scrollTop=msgs.scrollHeight;
     }
 
     loadCourse();

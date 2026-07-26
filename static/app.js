@@ -65,7 +65,7 @@ function toast(msg, type='default') {
   el.textContent = msg;
   el.className = 'show' + (type==='error' ? ' error' : '');
   clearTimeout(el._t);
-  el._t = setTimeout(()=>{ el.className=''; }, 3000);
+  el._t = setTimeout(() => { el.className=''; }, 3000);
 }
 function setLoading(btn, loading) {
   if (loading) { btn.dataset.original = btn.innerHTML; btn.innerHTML='<span class="spinner"></span>'; btn.disabled=true; }
